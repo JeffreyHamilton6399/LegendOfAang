@@ -50,11 +50,12 @@
     @keyframes cornerGlowFire  { 0%,100%{filter:drop-shadow(0 0 3px #f97316)} 50%{filter:drop-shadow(0 0 10px #f97316)} }
 
     /* ─── Page-ready animations (fire only once overlay is gone) ─── */
-    .anim-header, .anim-title, .anim-sub, .anim-player { opacity: 0; }
-    body.page-ready .anim-header { animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
-    body.page-ready .anim-title  { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.18s both; }
-    body.page-ready .anim-sub    { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.30s both; }
-    body.page-ready .anim-player { animation: slideUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.42s both; }
+    .anim-header, .anim-title, .anim-sub, .anim-player, .anim-countdown { opacity: 0; }
+    body.page-ready .anim-header    { animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
+    body.page-ready .anim-title     { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.18s both; }
+    body.page-ready .anim-sub       { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.30s both; }
+    body.page-ready .anim-player    { animation: slideUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.42s both; }
+    body.page-ready .anim-countdown { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.55s both; }
 
     /* ─── Base ─── */
     body {
@@ -160,6 +161,19 @@
       letter-spacing: 0.35em; text-transform: uppercase;
       color: var(--muted); border: 1px solid var(--dim);
       padding: 0.4em 1.2em; border-radius: 30px;
+    }
+    .header-streaming {
+      font-family: 'Cinzel', serif; font-size: 0.48rem;
+      letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(201,168,76,0.3);
+      padding: 0.4em 1.1em; border-radius: 30px;
+      background: rgba(201,168,76,0.05);
+      display: flex; align-items: center; gap: 0.5em;
+    }
+    .header-streaming .stream-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gold); opacity: 0.8;
+      flex-shrink: 0;
     }
 
     /* ─── Hero ─── */
@@ -380,7 +394,7 @@
     }
     .jeffrey-watermark:hover { color: rgba(240,244,255,0.7); opacity: 1; }
 
-    /* ─── Gold shimmer on frame ─── */
+    /* ─── Gold shimmer on frame — only when video is paused/stopped ─── */
     @keyframes shimmer {
       0%   { background-position: -200% center; }
       100% { background-position:  200% center; }
@@ -396,9 +410,14 @@
         transparent 65%
       );
       background-size: 200% 100%;
-      animation: shimmer 3.5s linear infinite;
       pointer-events: none;
       z-index: 1;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .player-frame.shimmer-active::before {
+      opacity: 1;
+      animation: shimmer 3.5s linear infinite;
     }
 
     /* ─── Buffering spinner ─── */
@@ -530,11 +549,6 @@
     .countdown-section {
       text-align: center; padding: 0 2rem 3.5rem;
     }
-    .countdown-eyebrow {
-      font-family: 'Cinzel', serif; font-size: 0.5rem;
-      letter-spacing: 0.4em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 1.4rem;
-    }
     .countdown-row {
       display: inline-flex; gap: clamp(0.8rem, 2.5vw, 2rem);
       align-items: flex-start;
@@ -661,10 +675,14 @@
 
 <!-- ── Background ── -->
 <div class="bg-layer"></div>
-<canvas id="particleCanvas" style="position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.55;"></canvas>
+<canvas id="particleCanvas" style="position:absolute;top:0;left:0;z-index:0;pointer-events:none;opacity:0.55;width:100%;"></canvas>
 
 <div class="page">
   <header class="anim-header">
+    <div class="header-streaming">
+      <span class="stream-dot"></span>
+      Paramount+ · Oct 9, 2026
+    </div>
     <div class="header-tag">Exclusive Screening</div>
   </header>
 
@@ -673,8 +691,7 @@
     <p class="hero-sub anim-sub">The Last Airbender</p>
   </section>
 
-  <section class="countdown-section anim-sub" data-reveal>
-    <p class="countdown-eyebrow">Streaming on Paramount+ —</p>
+  <section class="countdown-section anim-countdown" data-reveal>
     <div class="countdown-row" id="countdownRow">
       <div class="countdown-block"><span class="countdown-num" id="cdDays">--</span><span class="countdown-label">Days</span></div>
       <div class="countdown-sep">:</div>
@@ -1091,6 +1108,12 @@ function toggleFullscreen() {
 }
 
 /* ── Play / pause state ── */
+const playerFrame = document.querySelector('.player-frame');
+
+function updateShimmer() {
+  playerFrame.classList.toggle('shimmer-active', vid.paused);
+}
+
 clickArea.addEventListener('click', togglePlay);
 playBtn.addEventListener('click', togglePlay);
 
@@ -1099,13 +1122,17 @@ vid.addEventListener('play', () => {
   icPause.style.display = '';
   bigPlay.classList.add('hidden');
   resetIdle();
+  updateShimmer();
 });
 vid.addEventListener('pause', () => {
   icPlay.style.display  = '';
   icPause.style.display = 'none';
   bigPlay.classList.remove('hidden');
   shell.classList.remove('idle');
+  updateShimmer();
 });
+// Show shimmer on initial load (video starts paused)
+updateShimmer();
 
 /* ── Duration / time display ── */
 vid.addEventListener('loadedmetadata', () => { durEl.textContent = fmt(vid.duration); });
@@ -1256,41 +1283,40 @@ vid.addEventListener('loadedmetadata', () => {
 
 
 
-/* ── Ambient particles ── */
+/* ── Ambient particles (world-space — populate full document, not just viewport) ── */
 (function() {
   const canvas = document.getElementById('particleCanvas');
   const ctx    = canvas.getContext('2d');
 
   const BASE = 'https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/';
-  const SRCS = [
-    { src: BASE + 'air.png'   },
-    { src: BASE + 'water.png' },
-    { src: BASE + 'earth.png' },
-    { src: BASE + 'fire.png'  },
-  ];
-
-  const imgs = SRCS.map(s => {
+  const imgs = ['air','water','earth','fire'].map(n => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    img.src = s.src;
+    img.src = BASE + n + '.png';
     return img;
   });
 
   let W, H, particles = [];
 
+  function getDocHeight() {
+    return Math.max(
+      document.body.scrollHeight, document.documentElement.scrollHeight,
+      document.body.offsetHeight, document.documentElement.offsetHeight
+    );
+  }
+
   function resize() {
     W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+    H = canvas.height = getDocHeight();
+    canvas.style.height = H + 'px';
   }
   resize();
-  window.addEventListener('resize', resize);
+  window.addEventListener('resize', () => { resize(); });
+  // Re-measure after fonts/images load and content settles
+  window.addEventListener('load', resize);
 
   function rand(a, b) { return a + Math.random() * (b - a); }
 
-  // Each particle can be one of three motion types:
-  //   'drift'  — slow straight drift in any direction
-  //   'orbit'  — circular/elliptical swirl around a centre point
-  //   'wave'   — sinusoidal drift across the screen
   function spawn(initY) {
     const img  = imgs[Math.floor(Math.random() * imgs.length)];
     const type = Math.random() < 0.40 ? 'orbit' : (Math.random() < 0.5 ? 'wave' : 'drift');
@@ -1308,70 +1334,65 @@ vid.addEventListener('loadedmetadata', () => {
     if (type === 'orbit') {
       return {
         ...base,
-        cx:    rand(0, W),          // orbit centre x
-        cy:    rand(0, H),          // orbit centre y
-        rx:    rand(40, 180),       // orbit radius x
-        ry:    rand(30, 130),       // orbit radius y
+        cx: rand(0, W), cy: rand(0, H),
+        rx: rand(40, 180), ry: rand(30, 130),
         angle: rand(0, Math.PI * 2),
         speed: rand(0.002, 0.006) * (Math.random() < 0.5 ? 1 : -1),
       };
     } else if (type === 'wave') {
-      const angle = rand(0, Math.PI * 2);
-      const sp    = rand(0.1, 0.28);
+      const angle = rand(0, Math.PI * 2), sp = rand(0.1, 0.28);
       return {
         ...base,
-        vx:    Math.cos(angle) * sp,
-        vy:    Math.sin(angle) * sp,
-        wAmp:  rand(0.4, 1.8),     // wave amplitude
-        wFreq: rand(0.008, 0.022),  // wave frequency
-        wOff:  rand(0, Math.PI * 2),
-        t:     0,
+        vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp,
+        wAmp: rand(0.4, 1.8), wFreq: rand(0.008, 0.022),
+        wOff: rand(0, Math.PI * 2), t: 0,
       };
     } else {
-      const angle = rand(0, Math.PI * 2);
-      const sp    = rand(0.06, 0.2);
+      const angle = rand(0, Math.PI * 2), sp = rand(0.06, 0.2);
       return { ...base, vx: Math.cos(angle) * sp, vy: Math.sin(angle) * sp };
     }
   }
 
-  const COUNT = 120;
+  const COUNT = 160; // more particles since we cover the full doc
   for (let i = 0; i < COUNT; i++) particles.push(spawn(true));
 
   const pad = 80;
 
   function draw() {
+    // Resize canvas height when document grows (e.g. reveal animations)
+    const docH = getDocHeight();
+    if (docH !== H) { H = docH; canvas.height = H; canvas.style.height = H + 'px'; }
+
     ctx.clearRect(0, 0, W, H);
 
     for (const p of particles) {
-      // Update position by type
       if (p.type === 'orbit') {
         p.angle += p.speed;
         p.x = p.cx + Math.cos(p.angle) * p.rx;
         p.y = p.cy + Math.sin(p.angle) * p.ry;
-        // Slowly drift the orbit centre itself
         p.cx += 0.018 * Math.sin(p.angle * 0.3);
         p.cy += 0.012 * Math.cos(p.angle * 0.2);
+        // Wrap orbit centre within doc bounds
+        if (p.cx < -200) p.cx = W + 200;
+        if (p.cx > W + 200) p.cx = -200;
+        if (p.cy < -200) p.cy = H + 200;
+        if (p.cy > H + 200) p.cy = -200;
       } else if (p.type === 'wave') {
-        p.t  += 1;
-        p.x  += p.vx + Math.sin(p.t * p.wFreq + p.wOff) * p.wAmp * 0.08;
-        p.y  += p.vy + Math.cos(p.t * p.wFreq * 0.7) * p.wAmp * 0.05;
+        p.t += 1;
+        p.x += p.vx + Math.sin(p.t * p.wFreq + p.wOff) * p.wAmp * 0.08;
+        p.y += p.vy + Math.cos(p.t * p.wFreq * 0.7) * p.wAmp * 0.05;
       } else {
         p.x += p.vx;
         p.y += p.vy;
       }
       p.rot += p.vrot;
 
-      // Respawn when off screen (orbit wraps its centre instead)
-      if (p.type === 'orbit') {
-        if (p.cx < -200) p.cx = W + 200;
-        if (p.cx > W + 200) p.cx = -200;
-        if (p.cy < -200) p.cy = H + 200;
-        if (p.cy > H + 200) p.cy = -200;
-      } else {
+      // Respawn off-screen non-orbit particles from the bottom
+      if (p.type !== 'orbit') {
         if (p.x < -pad || p.x > W + pad || p.y < -pad || p.y > H + pad) {
           const np = spawn(false);
           np.x = rand(0, W);
-          np.y = H + 20;
+          np.y = rand(H * 0.1, H); // re-enter from a random doc-height position
           Object.assign(p, np);
           continue;
         }
