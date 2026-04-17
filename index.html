@@ -50,12 +50,13 @@
     @keyframes cornerGlowFire  { 0%,100%{filter:drop-shadow(0 0 3px #f97316)} 50%{filter:drop-shadow(0 0 10px #f97316)} }
 
     /* ─── Page-ready animations (fire only once overlay is gone) ─── */
-    .anim-header, .anim-title, .anim-sub, .anim-player, .anim-countdown { opacity: 0; }
+    .anim-header, .anim-title, .anim-sub, .anim-player { opacity: 0; }
+    .header-countdown { opacity: 0; }
     body.page-ready .anim-header    { animation: slideUp 0.7s cubic-bezier(0.22,1,0.36,1) 0.05s both; }
     body.page-ready .anim-title     { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.18s both; }
     body.page-ready .anim-sub       { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.30s both; }
     body.page-ready .anim-player    { animation: slideUp 0.9s cubic-bezier(0.22,1,0.36,1) 0.42s both; }
-    body.page-ready .anim-countdown { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.55s both; }
+    body.page-ready .header-countdown { animation: slideUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.55s both; }
 
     /* ─── Base ─── */
     body {
@@ -152,8 +153,8 @@
     .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
 
     header {
-      padding: 2rem 4rem;
-      display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+      padding: 1.4rem 4rem;
+      display: flex; align-items: center; justify-content: flex-end; gap: 16px;
       border-bottom: 1px solid var(--border);
     }
     .header-tag {
@@ -162,18 +163,46 @@
       color: var(--muted); border: 1px solid var(--dim);
       padding: 0.4em 1.2em; border-radius: 30px;
     }
-    .header-streaming {
-      font-family: 'Cinzel', serif; font-size: 0.48rem;
-      letter-spacing: 0.25em; text-transform: uppercase;
-      color: var(--gold); border: 1px solid rgba(201,168,76,0.3);
-      padding: 0.4em 1.1em; border-radius: 30px;
-      background: rgba(201,168,76,0.05);
-      display: flex; align-items: center; gap: 0.5em;
+
+    /* ─── Header countdown ─── */
+    .header-countdown {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(10,17,28,0.7);
+      border: 1px solid rgba(201,168,76,0.28);
+      border-radius: 30px;
+      padding: 0.45em 1.1em;
     }
-    .header-streaming .stream-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--gold); opacity: 0.8;
-      flex-shrink: 0;
+    .hcd-label, .hcd-platform {
+      font-family: 'Cinzel', serif; font-size: 0.48rem;
+      letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hcd-platform { color: var(--gold); opacity: 0.85; }
+    .hcd-timer {
+      display: flex; align-items: center; gap: 3px;
+    }
+    .hcd-unit {
+      display: flex; align-items: baseline; gap: 1px;
+    }
+    .hcd-num {
+      font-family: 'Cinzel Decorative', serif; font-weight: 700;
+      font-size: 0.75rem; line-height: 1;
+      background: linear-gradient(135deg, #fff 0%, #e8c96d 70%, #c9a84c 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      min-width: 2ch; text-align: center;
+    }
+    .hcd-unit-label {
+      font-family: 'Cinzel', serif; font-size: 0.38rem;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--muted); margin-left: 1px;
+    }
+    .hcd-sep {
+      font-family: 'Cinzel Decorative', serif; font-size: 0.7rem;
+      color: rgba(201,168,76,0.4); line-height: 1; padding: 0 1px;
+    }
+    .countdown-done-header {
+      font-family: 'Philosopher', serif; font-style: italic;
+      font-size: 0.62rem; color: var(--gold); letter-spacing: 0.12em;
     }
 
     /* ─── Hero ─── */
@@ -395,30 +424,55 @@
     .jeffrey-watermark:hover { color: rgba(240,244,255,0.7); opacity: 1; }
 
     /* ─── Gold shimmer on frame — only when video is paused/stopped ─── */
+    /* Streak travels slowly, then sits dark for a long pause before repeating */
     @keyframes shimmer {
-      0%   { background-position: -200% center; }
-      100% { background-position:  200% center; }
+      0%     { background-position: -220% center; opacity: 0; }
+      4%     { opacity: 1; }
+      30%    { background-position: 220% center; opacity: 1; }
+      34%    { opacity: 0; }
+      100%   { background-position: 220% center; opacity: 0; }
     }
+    /* Border flares up in sync with streak */
+    @keyframes framePulse {
+      0%   { box-shadow: 0 0 0 1px rgba(201,168,76,0.18), 0 0 40px rgba(201,168,76,0.13), 0 0 80px rgba(201,168,76,0.06), inset 0 1px 0 rgba(255,240,180,0.18); }
+      15%  { box-shadow: 0 0 0 2px rgba(255,220,100,0.65), 0 0 55px rgba(201,168,76,0.45), 0 0 110px rgba(201,168,76,0.22), inset 0 1px 0 rgba(255,240,180,0.35); }
+      34%  { box-shadow: 0 0 0 2px rgba(255,220,100,0.65), 0 0 55px rgba(201,168,76,0.45), 0 0 110px rgba(201,168,76,0.22), inset 0 1px 0 rgba(255,240,180,0.35); }
+      50%  { box-shadow: 0 0 0 1px rgba(201,168,76,0.18), 0 0 40px rgba(201,168,76,0.13), 0 0 80px rgba(201,168,76,0.06), inset 0 1px 0 rgba(255,240,180,0.18); }
+      100% { box-shadow: 0 0 0 1px rgba(201,168,76,0.18), 0 0 40px rgba(201,168,76,0.13), 0 0 80px rgba(201,168,76,0.06), inset 0 1px 0 rgba(255,240,180,0.18); }
+    }
+    /* Corner icons burst their element color in sync */
+    @keyframes cornerFlashWater { 0%,35%,100%{filter:drop-shadow(0 0 3px #4db8ff)} 15%,20%{filter:drop-shadow(0 0 18px #4db8ff) brightness(1.5)} }
+    @keyframes cornerFlashEarth { 0%,35%,100%{filter:drop-shadow(0 0 3px #6abf69)} 15%,20%{filter:drop-shadow(0 0 18px #6abf69) brightness(1.5)} }
+    @keyframes cornerFlashFire  { 0%,35%,100%{filter:drop-shadow(0 0 3px #f97316)} 15%,20%{filter:drop-shadow(0 0 18px #f97316) brightness(1.5)} }
+    @keyframes cornerFlashAir   { 0%,35%,100%{filter:drop-shadow(0 0 3px #f5c518)} 15%,20%{filter:drop-shadow(0 0 18px #f5c518) brightness(1.5)} }
+
     .player-frame::before {
       content: '';
       position: absolute; inset: 0;
       border-radius: 20px;
       background: linear-gradient(
         105deg,
-        transparent 35%,
-        rgba(255,230,120,0.45) 50%,
-        transparent 65%
+        transparent 30%,
+        rgba(255,235,130,0.15) 44%,
+        rgba(255,230,120,0.55) 50%,
+        rgba(255,235,130,0.15) 56%,
+        transparent 70%
       );
-      background-size: 200% 100%;
-      pointer-events: none;
-      z-index: 1;
+      background-size: 250% 100%;
+      pointer-events: none; z-index: 2;
       opacity: 0;
-      transition: opacity 0.5s ease;
     }
     .player-frame.shimmer-active::before {
-      opacity: 1;
-      animation: shimmer 3.5s linear infinite;
+      animation: shimmer 9s ease-in-out infinite;
     }
+    .player-frame.shimmer-active {
+      animation: framePulse 9s ease-in-out infinite;
+    }
+    /* Corner flashes — only when shimmer-active; offset so they light up mid-sweep */
+    .player-frame.shimmer-active .corner-water { animation: cornerFlashWater 9s ease-in-out infinite !important; }
+    .player-frame.shimmer-active .corner-earth { animation: cornerFlashEarth 9s ease-in-out infinite !important; }
+    .player-frame.shimmer-active .corner-fire  { animation: cornerFlashFire  9s ease-in-out infinite !important; }
+    .player-frame.shimmer-active .corner-air   { animation: cornerFlashAir   9s ease-in-out infinite !important; }
 
     /* ─── Buffering spinner ─── */
     @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
@@ -545,40 +599,8 @@
       .info-stats { flex-direction: row; flex-wrap: wrap; gap: 1.2rem; }
     }
 
-    /* ─── Countdown ─── */
-    .countdown-section {
-      text-align: center; padding: 0 2rem 3.5rem;
-    }
-    .countdown-row {
-      display: inline-flex; gap: clamp(0.8rem, 2.5vw, 2rem);
-      align-items: flex-start;
-    }
-    .countdown-block {
-      display: flex; flex-direction: column; align-items: center; gap: 0.45rem;
-      padding: clamp(0.8rem,2vw,1.2rem) clamp(1rem,2.5vw,1.8rem);
-      background: rgba(10,17,28,0.65);
-      border: 1px solid rgba(201,168,76,0.28);
-      border-radius: 12px;
-      min-width: clamp(60px, 8vw, 88px);
-      position: relative;
-      box-shadow: 0 0 18px rgba(201,168,76,0.06), inset 0 1px 0 rgba(255,240,180,0.06);
-    }
-    .countdown-num {
-      font-family: 'Cinzel Decorative', serif; font-weight: 900;
-      font-size: clamp(1.6rem, 4vw, 2.8rem); line-height: 1;
-      background: linear-gradient(135deg, #fff 0%, #e8c96d 60%, #c9a84c 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-      min-width: 2ch; text-align: center;
-    }
-    .countdown-label {
-      font-family: 'Cinzel', serif; font-size: 0.42rem;
-      letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted);
-    }
-    .countdown-sep {
-      font-family: 'Cinzel Decorative', serif; font-size: clamp(1.4rem, 3vw, 2.2rem);
-      color: rgba(201,168,76,0.35); line-height: 1;
-      padding-top: clamp(0.9rem,2.2vw,1.4rem);
-    }
+    /* ─── Countdown (legacy large-block styles — kept for .countdown-done fallback) ─── */
+    .countdown-section { text-align: center; padding: 0 2rem 3.5rem; }
     .countdown-done {
       font-family: 'Philosopher', serif; font-style: italic;
       font-size: clamp(1rem, 2.5vw, 1.4rem);
@@ -679,9 +701,18 @@
 
 <div class="page">
   <header class="anim-header">
-    <div class="header-streaming">
-      <span class="stream-dot"></span>
-      Paramount+ · Oct 9, 2026
+    <div class="header-countdown anim-countdown" id="headerCountdown">
+      <span class="hcd-label">Streaming in</span>
+      <div class="hcd-timer" id="countdownRow">
+        <span class="hcd-unit"><span class="hcd-num" id="cdDays">--</span><span class="hcd-unit-label">d</span></span>
+        <span class="hcd-sep">:</span>
+        <span class="hcd-unit"><span class="hcd-num" id="cdHours">--</span><span class="hcd-unit-label">h</span></span>
+        <span class="hcd-sep">:</span>
+        <span class="hcd-unit"><span class="hcd-num" id="cdMins">--</span><span class="hcd-unit-label">m</span></span>
+        <span class="hcd-sep">:</span>
+        <span class="hcd-unit"><span class="hcd-num" id="cdSecs">--</span><span class="hcd-unit-label">s</span></span>
+      </div>
+      <span class="hcd-platform">Paramount+</span>
     </div>
     <div class="header-tag">Exclusive Screening</div>
   </header>
@@ -689,18 +720,6 @@
   <section class="hero">
     <h1 class="hero-main anim-title">Legend of Aang</h1>
     <p class="hero-sub anim-sub">The Last Airbender</p>
-  </section>
-
-  <section class="countdown-section anim-countdown" data-reveal>
-    <div class="countdown-row" id="countdownRow">
-      <div class="countdown-block"><span class="countdown-num" id="cdDays">--</span><span class="countdown-label">Days</span></div>
-      <div class="countdown-sep">:</div>
-      <div class="countdown-block"><span class="countdown-num" id="cdHours">--</span><span class="countdown-label">Hours</span></div>
-      <div class="countdown-sep">:</div>
-      <div class="countdown-block"><span class="countdown-num" id="cdMins">--</span><span class="countdown-label">Minutes</span></div>
-      <div class="countdown-sep">:</div>
-      <div class="countdown-block"><span class="countdown-num" id="cdSecs">--</span><span class="countdown-label">Seconds</span></div>
-    </div>
   </section>
 
   <section class="player-section anim-player">
@@ -908,28 +927,31 @@
 
 <script>
 /* ══════════════════════════════════════════════
-   Intro audio — created only on first gesture
-   to guarantee browser autoplay policy is met.
+   Intro audio
+   Strategy: fetch the buffer immediately (passive).
+   Play it the moment the user makes any gesture
+   (click, key, touch) OR when auto-dismiss fires —
+   whichever comes first. AudioContext is created
+   only after a user gesture to satisfy browser
+   autoplay policies.
 ══════════════════════════════════════════════ */
-let _actx = null;
-let _sfxBuf = null;
+let _actx     = null;
+let _sfxBuf   = null;
 let _gainNode = null;
-let audioStarted = false;
-let audioReady = false;
+let _audioPlaying = false;
 
-// Pre-fetch MP3 as ArrayBuffer so it's warm in memory,
-// but DON'T create AudioContext until a user gesture.
+// Start fetching immediately — no AudioContext yet
 fetch('intro.mp3')
-  .then(r => r.arrayBuffer())
-  .then(ab => { _sfxBuf = ab; audioReady = true; })
+  .then(r => r.ok ? r.arrayBuffer() : Promise.reject())
+  .then(ab => { _sfxBuf = ab; })
   .catch(() => {});
 
-function startAudio() {
-  if (audioStarted) return;
-  audioStarted = true;
+function playIntroAudio() {
+  if (_audioPlaying) return;
+  _audioPlaying = true;
   try {
     _actx = new (window.AudioContext || window.webkitAudioContext)();
-    const playBuffer = (buf) => {
+    const go = (buf) => {
       _actx.resume().then(() => {
         _gainNode = _actx.createGain();
         _gainNode.gain.setValueAtTime(1, _actx.currentTime);
@@ -938,68 +960,58 @@ function startAudio() {
         src.buffer = buf;
         src.connect(_gainNode);
         src.start(0);
-      });
+      }).catch(() => {});
     };
-    if (audioReady && _sfxBuf) {
-      _actx.decodeAudioData(_sfxBuf.slice(0)).then(playBuffer).catch(() => {});
+    if (_sfxBuf) {
+      _actx.decodeAudioData(_sfxBuf.slice(0)).then(go).catch(() => {});
     } else {
-      // Buffer not fetched yet — poll briefly then play
-      let attempts = 0;
+      // Buffer still loading — wait up to 2s then give up
+      let tries = 0;
       const poll = setInterval(() => {
-        attempts++;
-        if (_sfxBuf) {
-          clearInterval(poll);
-          _actx.decodeAudioData(_sfxBuf.slice(0)).then(playBuffer).catch(() => {});
-        } else if (attempts > 20) {
-          clearInterval(poll);
-        }
+        if (_sfxBuf) { clearInterval(poll); _actx.decodeAudioData(_sfxBuf.slice(0)).then(go).catch(() => {}); }
+        else if (++tries > 20) clearInterval(poll);
       }, 100);
     }
   } catch(e) {}
 }
 
-// Fallback: fire on first real interaction if blocked
-['click', 'touchstart', 'keydown', 'pointerdown'].forEach(evt =>
-  document.addEventListener(evt, startAudio, { once: true, capture: true })
-);
-
 function stopIntroAudio() {
-  if (_actx && _gainNode && _actx.state === 'running') {
-    try {
-      _gainNode.gain.setValueAtTime(_gainNode.gain.value, _actx.currentTime);
-      _gainNode.gain.linearRampToValueAtTime(0, _actx.currentTime + 0.4);
-      setTimeout(() => { try { _actx.close(); } catch(e) {} }, 450);
-    } catch(e) {}
-  }
+  if (!_actx || !_gainNode) return;
+  try {
+    const t = _actx.currentTime;
+    _gainNode.gain.setValueAtTime(_gainNode.gain.value, t);
+    _gainNode.gain.linearRampToValueAtTime(0, t + 0.5);
+    setTimeout(() => { try { _actx.close(); } catch(e) {} }, 600);
+  } catch(e) {}
 }
 
 /* ══════════════════════════════════════════════
    Intro overlay sequence
 ══════════════════════════════════════════════ */
 const overlay = document.getElementById('introOverlay');
+let overlayDismissed = false;
 
-requestAnimationFrame(() => {
-  setTimeout(() => {
-    overlay.classList.add('symbols-in');
-  }, 80);
-});
+// Animate symbols in after first paint
+requestAnimationFrame(() => setTimeout(() => overlay.classList.add('symbols-in'), 80));
 
 function dismissOverlay() {
-  if (overlay.classList.contains('fade-out')) return;
-  startAudio();                          // play on user gesture (no-op if already started)
+  if (overlayDismissed) return;
+  overlayDismissed = true;
+  playIntroAudio();
   overlay.classList.add('fade-out');
   setTimeout(() => {
     overlay.style.display = 'none';
     document.body.classList.add('page-ready');
   }, 650);
-  setTimeout(stopIntroAudio, 2000);      // let it play ~2s then fade out
+  // Fade out audio after ~2.5s so it doesn't clash with the video
+  setTimeout(stopIntroAudio, 2500);
 }
 
-// Auto-dismiss after 2.4s
-setTimeout(dismissOverlay, 2400);
+// User can click to dismiss immediately
+overlay.addEventListener('click', dismissOverlay, { once: true });
 
-// Also dismiss on click
-overlay.addEventListener('click', dismissOverlay);
+// Auto-dismiss after 2.8s (gives symbols time to breathe)
+setTimeout(dismissOverlay, 2800);
 
 /* ══════════════════════════════════════════════
    Video player
@@ -1436,14 +1448,14 @@ vid.addEventListener('loadedmetadata', () => {
   const hEl = document.getElementById('cdHours');
   const mEl = document.getElementById('cdMins');
   const sEl = document.getElementById('cdSecs');
-  const row = document.getElementById('countdownRow');
+  const container = document.getElementById('headerCountdown');
 
   function pad(n) { return String(n).padStart(2, '0'); }
 
   function tick() {
     const diff = target - Date.now();
     if (diff <= 0) {
-      row.innerHTML = '<span class="countdown-done">Now Streaming on Paramount+</span>';
+      container.innerHTML = '<span class="countdown-done-header">Now Streaming on Paramount+</span>';
       return;
     }
     const totalSecs = Math.floor(diff / 1000);
