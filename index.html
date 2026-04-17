@@ -457,6 +457,7 @@ sfx.volume  = 1.0;
 // and plays with zero latency on the first user gesture.
 let _actx = null;
 let _sfxBuf = null;
+let _gainNode = null;
 let audioStarted = false;
 
 (function warmAudio() {
@@ -476,9 +477,12 @@ function startAudio() {
   // If buffer is decoded, play via Web Audio (instant, no buffering delay)
   if (_actx && _sfxBuf) {
     _actx.resume().then(() => {
+      _gainNode = _actx.createGain();
+      _gainNode.gain.setValueAtTime(1, _actx.currentTime);
+      _gainNode.connect(_actx.destination);
       const src = _actx.createBufferSource();
       src.buffer = _sfxBuf;
-      src.connect(_actx.destination);
+      src.connect(_gainNode);
       src.start(0);
     });
   } else {
@@ -487,21 +491,17 @@ function startAudio() {
   }
 }
 
-// Try right away (works if browser permits autoplay)
-startAudio();
-
 // Fallback: fire on first real interaction if blocked
 ['click', 'touchstart', 'keydown', 'pointerdown'].forEach(evt =>
   document.addEventListener(evt, startAudio, { once: true, capture: true })
 );
 
 function stopIntroAudio() {
-  // Fade & close Web Audio context if it was used
-  if (_actx && _actx.state === 'running') {
+  // Fade via gain node if Web Audio was used
+  if (_actx && _gainNode && _actx.state === 'running') {
     try {
-      const gain = _actx.createGain();
-      gain.gain.setValueAtTime(1, _actx.currentTime);
-      gain.gain.linearRampToValueAtTime(0, _actx.currentTime + 0.4);
+      _gainNode.gain.setValueAtTime(_gainNode.gain.value, _actx.currentTime);
+      _gainNode.gain.linearRampToValueAtTime(0, _actx.currentTime + 0.4);
       setTimeout(() => { try { _actx.close(); } catch(e) {} }, 450);
     } catch(e) {}
   }
@@ -532,12 +532,13 @@ requestAnimationFrame(() => {
 
 function dismissOverlay() {
   if (overlay.classList.contains('fade-out')) return;
+  startAudio();                          // play on user gesture (no-op if already started)
   overlay.classList.add('fade-out');
-  stopIntroAudio();
   setTimeout(() => {
     overlay.style.display = 'none';
     document.body.classList.add('page-ready');
   }, 650);
+  setTimeout(stopIntroAudio, 2000);      // let it play ~2s then fade out
 }
 
 // Auto-dismiss after 2.4s
