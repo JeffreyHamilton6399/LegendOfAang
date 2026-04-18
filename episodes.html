@@ -188,8 +188,8 @@
     .season-pill-chevron{width:14px;height:14px;margin-left:.2em;transition:transform .25s;flex-shrink:0;opacity:.6;}
     .season-pill.open .season-pill-chevron{transform:rotate(180deg);}
 
-    /* Dropdown panel */
-    .season-dropdown{position:absolute;top:calc(100% + 8px);left:0;z-index:80;background:rgba(8,14,26,.97);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:.5rem;min-width:220px;backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .2s,transform .2s;}
+    /* Dropdown panel — fixed to viewport so it's never clipped */
+    .season-dropdown{position:fixed;z-index:200;background:rgba(8,14,26,.97);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:.5rem;min-width:220px;backdrop-filter:blur(20px);box-shadow:0 12px 40px rgba(0,0,0,.6);opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .2s,transform .2s;}
     .season-dropdown.open{opacity:1;transform:translateY(0);pointer-events:all;}
     .season-opt{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:9px;cursor:pointer;transition:background .15s;user-select:none;}
     .season-opt:hover{background:rgba(255,255,255,.07);}
@@ -466,7 +466,7 @@
     </div>
 
     <!-- Netflix-style book selector -->
-    <div class="season-bar" data-reveal data-reveal-delay="0.1">
+    <div class="season-bar">
       <span class="season-label">Book</span>
       <div class="season-pill-wrap">
         <div class="season-pill" id="seasonPill">
@@ -677,13 +677,20 @@ function selectBook(b) {
 }
 
 /* Toggle dropdown */
-function openPill()  { pill.classList.add('open'); dropdown.classList.add('open'); }
+function openPill() {
+  const rect = pill.getBoundingClientRect();
+  dropdown.style.top  = (rect.bottom + 8) + 'px';
+  dropdown.style.left = rect.left + 'px';
+  pill.classList.add('open');
+  dropdown.classList.add('open');
+}
 function closePill() { pill.classList.remove('open'); dropdown.classList.remove('open'); }
 pill.addEventListener('click', e => { e.stopPropagation(); pill.classList.contains('open') ? closePill() : openPill(); });
 document.addEventListener('click', () => closePill());
 dropdown.addEventListener('click', e => e.stopPropagation());
 
 /* Init */
+document.body.appendChild(dropdown); // escape any clipping/stacking context
 setPill(1);
 renderEpisodes(1);
 
