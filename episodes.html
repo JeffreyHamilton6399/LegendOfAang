@@ -97,7 +97,7 @@
     .player-shell{position:relative;background:#000;border-radius:16px;overflow:hidden;}
     .player-shell.idle{cursor:none;}
     .player-shell.idle .controls{opacity:0;pointer-events:none;transform:translateY(10px);}
-    #mainVideo{display:block;width:100%;aspect-ratio:16/9;background:#000;pointer-events:none;object-fit:contain;}
+    #mainVideo{display:block;width:100%;aspect-ratio:4/3;background:#000;pointer-events:none;object-fit:contain;}
     :fullscreen #mainVideo,:-webkit-full-screen #mainVideo{width:100vw;height:100vh;max-width:100%;max-height:100%;aspect-ratio:unset;object-fit:contain;}
     .big-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:10;pointer-events:none;transition:all .4s ease;}
     .big-play svg{width:28px;height:28px;fill:var(--white);margin-left:4px;}
@@ -171,8 +171,9 @@
     #osdToast.hide{animation:osdOut .35s ease forwards;}
     .progress{position:relative;height:18px;display:flex;align-items:center;margin-bottom:10px;cursor:pointer;}
     .progress-track{position:absolute;left:0;right:0;height:3px;background:rgba(255,255,255,.1);border-radius:4px;}
+    .prog-buf{position:absolute;left:0;top:0;bottom:0;background:rgba(255,255,255,.18);border-radius:4px;width:0%;pointer-events:none;}
     .prog-fill{position:absolute;left:0;top:0;bottom:0;background:var(--blue);border-radius:4px;width:0%;}
-    .prog-thumb{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:var(--white);left:0%;opacity:0;transition:opacity .2s;pointer-events:none;}
+    .prog-thumb{position:absolute;top:50%;left:0%;width:13px;height:13px;border-radius:50%;background:var(--white);transform:translate(-50%,-50%);opacity:0;transition:opacity .2s;pointer-events:none;box-shadow:0 0 4px rgba(0,0,0,.5);}
     .progress:hover .prog-thumb{opacity:1;}
     .ctrls-row{display:flex;align-items:center;gap:10px;}
     .cbtn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,.6);width:36px;height:36px;display:flex;align-items:center;justify-content:center;transition:color .2s;}
@@ -321,7 +322,7 @@
       <div class="corner corner-bl"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/fire.png" alt="" class="corner-img corner-fire"></div>
       <div class="corner corner-br"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="" class="corner-img corner-air"></div>
       <div class="player-shell idle" id="playerShell">
-        <video id="mainVideo" preload="metadata" playsinline poster="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/preview.jpg">
+        <video id="mainVideo" preload="none" playsinline poster="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/previewATLA.jpg">
           <source src="" type="video/x-matroska" id="videoSource">
         </video>
         <div class="big-play" id="bigPlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
@@ -338,7 +339,7 @@
         </div>
         <div class="controls">
           <div class="progress" id="prog">
-            <div class="progress-track"><div class="prog-fill" id="progFill"></div></div>
+            <div class="progress-track"><div class="prog-buf" id="progBuf"></div><div class="prog-fill" id="progFill"></div></div>
             <div class="prog-thumb" id="progThumb"></div>
           </div>
           <div class="ctrls-row">
@@ -546,7 +547,7 @@ function dismissOverlay(){ if(dismissed)return;dismissed=true;overlay.classList.
 overlay.addEventListener('click',dismissOverlay,{once:true}); setTimeout(dismissOverlay,2800);
 
 /* Player refs */
-const vid=document.getElementById('mainVideo'),shell=document.getElementById('playerShell'),bigPlay=document.getElementById('bigPlay'),clickArea=document.getElementById('clickArea'),playBtn=document.getElementById('playBtn'),icPlay=document.getElementById('icPlay'),icPause=document.getElementById('icPause'),curEl=document.getElementById('curTime'),durEl=document.getElementById('durTime'),progFill=document.getElementById('progFill'),progThumb=document.getElementById('progThumb'),prog=document.getElementById('prog'),volBtn=document.getElementById('volBtn'),volSlider=document.getElementById('volSlider'),icVolOn=document.getElementById('icVolOn'),icVolOff=document.getElementById('icVolOff'),playerFrame=document.getElementById('playerFrame'),skipBtn=document.getElementById('skipIntroBtn'),nextPanel=document.getElementById('nextEpPanel'),nepTitle=document.getElementById('nepTitle'),nepBtn=document.getElementById('nepBtn'),nepProgress=document.getElementById('nepProgress'),nepSkip=document.getElementById('nepSkip'),bufSpin=document.getElementById('bufferSpinner'),ccBtn=document.getElementById('ccBtn'),captionBox=document.getElementById('captionBox');
+const vid=document.getElementById('mainVideo'),shell=document.getElementById('playerShell'),bigPlay=document.getElementById('bigPlay'),clickArea=document.getElementById('clickArea'),playBtn=document.getElementById('playBtn'),icPlay=document.getElementById('icPlay'),icPause=document.getElementById('icPause'),curEl=document.getElementById('curTime'),durEl=document.getElementById('durTime'),progFill=document.getElementById('progFill'),progBuf=document.getElementById('progBuf'),progThumb=document.getElementById('progThumb'),prog=document.getElementById('prog'),volBtn=document.getElementById('volBtn'),volSlider=document.getElementById('volSlider'),icVolOn=document.getElementById('icVolOn'),icVolOff=document.getElementById('icVolOff'),playerFrame=document.getElementById('playerFrame'),skipBtn=document.getElementById('skipIntroBtn'),nextPanel=document.getElementById('nextEpPanel'),nepTitle=document.getElementById('nepTitle'),nepBtn=document.getElementById('nepBtn'),nepProgress=document.getElementById('nepProgress'),nepSkip=document.getElementById('nepSkip'),bufSpin=document.getElementById('bufferSpinner'),ccBtn=document.getElementById('ccBtn'),captionBox=document.getElementById('captionBox');
 
 let idleTimer;
 function resetIdle(){ shell.classList.remove('idle'); clearTimeout(idleTimer); if(!vid.paused) idleTimer=setTimeout(()=>shell.classList.add('idle'),1250); }
@@ -579,7 +580,9 @@ vid.addEventListener('play',()=>{ icPlay.style.display='none';icPause.style.disp
 vid.addEventListener('pause',()=>{ icPlay.style.display='';icPause.style.display='none';bigPlay.classList.remove('hidden');shell.classList.remove('idle');updateShimmer();cancelAuto(); });
 updateShimmer();
 vid.addEventListener('loadedmetadata',()=>{ durEl.textContent=fmt(vid.duration); });
-vid.addEventListener('timeupdate',()=>{ if(isSeeking)return; const pct=(vid.currentTime/vid.duration)*100||0; progFill.style.width=pct+'%';progThumb.style.left=pct+'%';curEl.textContent=fmt(vid.currentTime); handleSkipIntro();handleNextPanel(); });
+vid.addEventListener('timeupdate',()=>{ if(isSeeking)return; const pct=(vid.currentTime/vid.duration)*100||0; progFill.style.width=pct+'%';progThumb.style.left=pct+'%';curEl.textContent=fmt(vid.currentTime);
+  if(vid.buffered.length){const bp=(vid.buffered.end(vid.buffered.length-1)/vid.duration)*100||0;progBuf.style.width=bp+'%';}
+  handleSkipIntro();handleNextPanel(); });
 vid.addEventListener('ended',()=>{ updateShimmer(); if(currentEp)showNextPanel(true); });
 let isSeeking=false;
 function seekTo(cx){ const r=prog.getBoundingClientRect(),pct=Math.max(0,Math.min(1,(cx-r.left)/r.width)),t=pct*vid.duration; vid.currentTime=t;progFill.style.width=(pct*100)+'%';progThumb.style.left=(pct*100)+'%';curEl.textContent=fmt(t); }
@@ -633,7 +636,7 @@ function loadEpisode(book,epNum){
   const bData=BOOKS[book-1],title=bData.episodes[epNum-1];
   currentEp={book,num:epNum,title}; hideNextPanel(); skipBtn.style.display='none';
   srtCues=[];lastCueText=null;hideCaption();
-  vid.pause(); vid.src=epUrl(book,epNum); vid.load(); vid.play().catch(()=>{});
+  vid.pause(); vid.src=epUrl(book,epNum)+'#t=0.001'; vid.load(); vid.play().catch(()=>{});
   fetch(subUrl(book,epNum)).then(r=>r.ok?r.text():Promise.reject()).then(t=>{srtCues=parseSRT(t);}).catch(()=>{});
   document.getElementById('npTitle').textContent=title;
   document.getElementById('npEp').textContent=`Book ${book}, Ep ${epNum}`;
