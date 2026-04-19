@@ -180,7 +180,7 @@
     .hub-card:hover .card-poster-bg { filter: brightness(.72) saturate(1.5); transform: scale(1.06); }
     .card-poster-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(to bottom,rgba(4,7,13,.18) 0%,transparent 30%,rgba(4,7,13,.85) 75%,rgba(4,7,13,.97) 100%);
+      background: linear-gradient(to bottom,rgba(4,7,13,.1) 0%,rgba(4,7,13,.05) 25%,rgba(4,7,13,.5) 65%,rgba(4,7,13,.88) 100%);
     }
 
 
@@ -246,19 +246,19 @@
   <p class="intro-tagline">Four elements. One destiny.</p>
   <div class="symbols-grid">
     <div class="sym-item water">
-      <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/water.png" alt="Water" class="sym-img">
+      <img src="images/water.png" alt="Water" class="sym-img">
       <span class="sym-label">Water</span>
     </div>
     <div class="sym-item earth">
-      <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/earth.png" alt="Earth" class="sym-img">
+      <img src="images/earth.png" alt="Earth" class="sym-img">
       <span class="sym-label">Earth</span>
     </div>
     <div class="sym-item fire">
-      <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/fire.png" alt="Fire" class="sym-img">
+      <img src="images/fire.png" alt="Fire" class="sym-img">
       <span class="sym-label">Fire</span>
     </div>
     <div class="sym-item air">
-      <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="Air" class="sym-img">
+      <img src="images/air.png" alt="Air" class="sym-img">
       <span class="sym-label">Air</span>
     </div>
   </div>
@@ -377,7 +377,7 @@ setTimeout(dismissOverlay, 2800);
 (function() {
   const canvas = document.getElementById('particleCanvas');
   const ctx    = canvas.getContext('2d');
-  const BASE   = 'https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/';
+  const BASE   = 'images/';
   const imgs   = ['air','water','earth','fire'].map(n => {
     const img = new Image(); img.crossOrigin = 'anonymous'; img.src = BASE + n + '.png'; return img;
   });
