@@ -718,45 +718,63 @@
 const mapSplash  = document.getElementById('mapSplash');
 const overlay    = document.getElementById('introOverlay');
 let mapDone = false, overlayDone = false;
+let userClickedMap = false, userClickedOverlay = false;
 
 // Animate map in on first paint
 requestAnimationFrame(() => setTimeout(() => mapSplash.classList.add('map-in'), 60));
 
-function dismissMap() {
+function dismissMap(fromUser) {
   if (mapDone) return; mapDone = true;
+  if (fromUser) userClickedMap = true;
   mapSplash.classList.add('fade-out');
   setTimeout(() => {
     mapSplash.style.display = 'none';
-    // Now show the Four Elements overlay
     requestAnimationFrame(() => setTimeout(() => overlay.classList.add('symbols-in'), 60));
   }, 800);
 }
-mapSplash.addEventListener('click', dismissMap, { once: true });
-mapSplash.addEventListener('keydown', e => { if(e.code==='Space'||e.code==='Enter') dismissMap(); });
+mapSplash.addEventListener('click', () => dismissMap(true), { once: true });
+mapSplash.addEventListener('keydown', e => { if(e.code==='Space'||e.code==='Enter') dismissMap(true); });
 mapSplash.setAttribute('tabindex','0');
-setTimeout(dismissMap, 3800); // auto-advance after 3.8s
+setTimeout(() => dismissMap(false), 3800); // auto-advance after 3.8s
 
 /* ── Four Elements overlay ── */
-function dismissOverlay() {
+function dismissOverlay(fromUser) {
   if (overlayDone) return; overlayDone = true;
-  // Play intro audio (user-triggered only)
-  const introAudio = document.getElementById('introAudio');
-  if (introAudio) introAudio.play().catch(()=>{});
+  if (fromUser) userClickedOverlay = true;
+
   overlay.classList.add('fade-out');
   setTimeout(() => {
     overlay.style.display = 'none';
     document.body.classList.add('page-ready');
-    // Auto-start ambient music after intro
-    setTimeout(()=>{ if(window._startAmbient) window._startAmbient(); }, 800);
+
+    // Only play audio if any user gesture actually happened
+    const hadGesture = userClickedMap || userClickedOverlay;
+    if (hadGesture) {
+      const introAudio = document.getElementById('introAudio');
+      if (introAudio) {
+        introAudio.play().then(() => {
+          // After intro finishes (or after a short delay), start ambient
+          introAudio.addEventListener('ended', () => {
+            if (window._startAmbient) window._startAmbient();
+          }, { once: true });
+          // Fallback: start ambient after 4s regardless
+          setTimeout(() => { if (window._startAmbient) window._startAmbient(); }, 4000);
+        }).catch(() => {
+          // intro failed, try ambient directly
+          setTimeout(() => { if (window._startAmbient) window._startAmbient(); }, 800);
+        });
+      } else {
+        setTimeout(() => { if (window._startAmbient) window._startAmbient(); }, 800);
+      }
+    }
   }, 650);
 }
-overlay.addEventListener('click', dismissOverlay, { once: true });
-// Keyboard: Space or Enter also dismisses
-overlay.addEventListener('keydown', e => { if(e.code==='Space'||e.code==='Enter') dismissOverlay(); });
+overlay.addEventListener('click', () => dismissOverlay(true), { once: true });
+overlay.addEventListener('keydown', e => { if(e.code==='Space'||e.code==='Enter') dismissOverlay(true); });
 overlay.setAttribute('tabindex','0');
 // Auto-dismiss 2.8s after map is gone
-mapSplash.addEventListener('click', () => setTimeout(dismissOverlay, 2800), { once: true });
-setTimeout(dismissOverlay, 3800 + 2800); // fallback absolute timer
+mapSplash.addEventListener('click', () => setTimeout(() => dismissOverlay(false), 2800), { once: true });
+setTimeout(() => dismissOverlay(false), 3800 + 2800); // fallback absolute timer
 
 /* ══════════════════════════════════════════
    GLOBAL SEARCH
@@ -829,25 +847,33 @@ searchInput.addEventListener('focus', () => { if (searchInput.value.trim()) runS
   // Restore saved mute preference (default: play after intro)
   const savedMuted = localStorage.getItem('avatarhub_ambient_off') === '1';
 
-  function fadeIn(){ 
+  function fadeIn(){
+    if (playing) return;
     clearInterval(fadeTimer);
     audio.volume = 0;
-    audio.play().catch(()=>{});
-    fadeTimer = setInterval(()=>{ audio.volume=Math.min(1,audio.volume+0.02); if(audio.volume>=1)clearInterval(fadeTimer); },60);
-    playing=true; btn.classList.add('active');
-    localStorage.setItem('avatarhub_ambient_off','0');
+    audio.play().then(() => {
+      playing = true;
+      btn.classList.add('active');
+      localStorage.setItem('avatarhub_ambient_off','0');
+      fadeTimer = setInterval(() => {
+        audio.volume = Math.min(0.55, audio.volume + 0.015);
+        if (audio.volume >= 0.55) clearInterval(fadeTimer);
+      }, 60);
+    }).catch(() => {});
   }
   function fadeOut(){
     clearInterval(fadeTimer);
-    fadeTimer = setInterval(()=>{ audio.volume=Math.max(0,audio.volume-0.04); if(audio.volume<=0){clearInterval(fadeTimer);audio.pause();} },60);
-    playing=false; btn.classList.remove('active');
+    fadeTimer = setInterval(()=>{ audio.volume=Math.max(0,audio.volume-0.04); if(audio.volume<=0){clearInterval(fadeTimer);audio.pause();playing=false;} },60);
+    btn.classList.remove('active');
     localStorage.setItem('avatarhub_ambient_off','1');
   }
 
-  // Called by dismissOverlay to auto-start
-  window._startAmbient = function(){ if(!savedMuted && !playing) fadeIn(); };
+  // Called by dismissOverlay to auto-start (only fires after a real user gesture)
+  window._startAmbient = function(){
+    if (!savedMuted && !playing) fadeIn();
+  };
 
-  btn.addEventListener('click', ()=>{ playing ? fadeOut() : fadeIn(); });
+  btn.addEventListener('click', () => { playing ? fadeOut() : fadeIn(); });
 })();
 
 /* ══════════════════════════════════════════
