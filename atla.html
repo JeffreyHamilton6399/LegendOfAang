@@ -287,10 +287,10 @@
 <div id="introOverlay" title="Click to enter">
   <p class="intro-tagline">Four elements. One destiny.</p>
   <div class="symbols-grid">
-    <div class="sym-item water"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/water.png" alt="Water" class="sym-img"><span class="sym-label">Water</span></div>
-    <div class="sym-item earth"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/earth.png" alt="Earth" class="sym-img"><span class="sym-label">Earth</span></div>
-    <div class="sym-item fire"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/fire.png" alt="Fire" class="sym-img"><span class="sym-label">Fire</span></div>
-    <div class="sym-item air"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="Air" class="sym-img"><span class="sym-label">Air</span></div>
+    <div class="sym-item water"><img src="images/water.png" alt="Water" class="sym-img"><span class="sym-label">Water</span></div>
+    <div class="sym-item earth"><img src="images/earth.png" alt="Earth" class="sym-img"><span class="sym-label">Earth</span></div>
+    <div class="sym-item fire"><img src="images/fire.png" alt="Fire" class="sym-img"><span class="sym-label">Fire</span></div>
+    <div class="sym-item air"><img src="images/air.png" alt="Air" class="sym-img"><span class="sym-label">Air</span></div>
   </div>
 </div>
 
@@ -323,10 +323,10 @@
       <span class="np-ep" id="npEp"></span>
     </div>
     <div class="player-frame" id="playerFrame">
-      <div class="corner corner-tl"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/water.png" alt="" class="corner-img corner-water"></div>
-      <div class="corner corner-tr"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/earth.png" alt="" class="corner-img corner-earth"></div>
-      <div class="corner corner-bl"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/fire.png" alt="" class="corner-img corner-fire"></div>
-      <div class="corner corner-br"><img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="" class="corner-img corner-air"></div>
+      <div class="corner corner-tl"><img src="images/water.png" alt="" class="corner-img corner-water"></div>
+      <div class="corner corner-tr"><img src="images/earth.png" alt="" class="corner-img corner-earth"></div>
+      <div class="corner corner-bl"><img src="images/fire.png" alt="" class="corner-img corner-fire"></div>
+      <div class="corner corner-br"><img src="images/air.png" alt="" class="corner-img corner-air"></div>
       <div class="player-shell idle" id="playerShell">
         <video id="mainVideo" preload="none" playsinline poster="images/previewATLA.png">
           <source src="" type="video/x-matroska" id="videoSource">
@@ -391,9 +391,9 @@
       <div class="section-divider">
         <div class="section-divider-line"></div>
         <div class="section-divider-inner">
-          <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="" class="divider-sym">
+          <img src="images/air.png" alt="" class="divider-sym">
           <span class="section-divider-title">Choose Your Episode</span>
-          <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="" class="divider-sym">
+          <img src="images/air.png" alt="" class="divider-sym">
         </div>
         <div class="section-divider-line"></div>
       </div>
@@ -474,9 +474,9 @@
       <div class="section-divider">
         <div class="section-divider-line"></div>
         <div class="section-divider-inner">
-          <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="" class="divider-sym">
+          <img src="images/air.png" alt="" class="divider-sym">
           <span class="section-divider-title">About the Series</span>
-          <img src="https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main/air.png" alt="" class="divider-sym">
+          <img src="images/air.png" alt="" class="divider-sym">
         </div>
         <div class="section-divider-line"></div>
       </div>
@@ -537,7 +537,7 @@
 <script>
 /* ─── CONFIG ─── */
 const GH    = 'https://github.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/releases/download';
-const ASSETS= 'https://raw.githubusercontent.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/main';
+const ASSETS= 'images';
 const INTRO_SHOW_FROM       = 2;    // seconds in before Skip Intro appears
 const INTRO_END_SEC         = 90;   // where Skip Intro jumps to (adjust per episode)
 const NEXT_EP_BEFORE_END    = 30;   // seconds before end to show Next Episode panel
@@ -571,7 +571,7 @@ const vid=document.getElementById('mainVideo'),shell=document.getElementById('pl
 let idleTimer;
 function resetIdle(){ shell.classList.remove('idle'); clearTimeout(idleTimer); if(!vid.paused) idleTimer=setTimeout(()=>shell.classList.add('idle'),1250); }
 document.addEventListener('mousemove',resetIdle); document.addEventListener('keydown',resetIdle); document.addEventListener('touchstart',resetIdle,{passive:true});
-document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT')return; switch(e.code){ case'Space':case'KeyK':e.preventDefault();togglePlay();showOSD(vid.paused?'Play':'Pause');break;case'ArrowRight':e.preventDefault();if(isFinite(vid.duration))vid.currentTime=Math.min(vid.duration,vid.currentTime+5);showOSD('+5s');break;case'ArrowLeft':e.preventDefault();vid.currentTime=Math.max(0,vid.currentTime-5);showOSD('−5s');break;case'ArrowUp':e.preventDefault();vid.volume=Math.min(1,vid.volume+.1);vid.muted=false;volSlider.value=vid.volume;updateVolUI();showOSD('Vol '+Math.round(vid.volume*100)+'%');break;case'ArrowDown':e.preventDefault();vid.volume=Math.max(0,vid.volume-.1);vid.muted=vid.volume===0;volSlider.value=vid.volume;updateVolUI();showOSD('Vol '+Math.round(vid.volume*100)+'%');break;case'KeyM':vid.muted=!vid.muted;volSlider.value=vid.muted?0:(vid.volume||1);updateVolUI();showOSD(vid.muted?'Muted':'Sound On');break;case'KeyF':e.preventDefault();toggleFullscreen();showOSD('Fullscreen');break;} });
+document.addEventListener('keydown',e=>{ if(e.target.tagName==='INPUT')return; switch(e.code){ case'Space':case'KeyK':e.preventDefault();togglePlay();break;case'ArrowRight':e.preventDefault();if(isFinite(vid.duration))vid.currentTime=Math.min(vid.duration,vid.currentTime+5);showOSD('+5s');break;case'ArrowLeft':e.preventDefault();vid.currentTime=Math.max(0,vid.currentTime-5);showOSD('−5s');break;case'ArrowUp':e.preventDefault();vid.volume=Math.min(1,vid.volume+.1);vid.muted=false;volSlider.value=vid.volume;updateVolUI();showOSD('Vol '+Math.round(vid.volume*100)+'%');break;case'ArrowDown':e.preventDefault();vid.volume=Math.max(0,vid.volume-.1);vid.muted=vid.volume===0;volSlider.value=vid.volume;updateVolUI();showOSD('Vol '+Math.round(vid.volume*100)+'%');break;case'KeyM':vid.muted=!vid.muted;volSlider.value=vid.muted?0:(vid.volume||1);updateVolUI();showOSD(vid.muted?'Muted':'Sound On');break;case'KeyF':e.preventDefault();toggleFullscreen();showOSD('Fullscreen');break;} });
 let tapTimer=null,tapCount=0,lastTapX=0;
 clickArea.addEventListener('touchend',e=>{
   e.preventDefault();resetIdle();
