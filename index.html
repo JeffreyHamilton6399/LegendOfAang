@@ -28,6 +28,76 @@
       --water:  #4db8ff;
       --earth:  #6abf69;
       --fire:   #f97316;
+      --card-bg: linear-gradient(160deg,rgba(10,17,28,.95) 0%,rgba(6,11,20,.98) 100%);
+    }
+
+    /* ── Light themes ── */
+    body.theme-parchment {
+      --deep:#f5efe0; --panel:#ede4ce; --white:#1a1008; --muted:#7a6040;
+      --dim:#b8a880; --border:rgba(0,0,0,0.10); --gold:#9a6820;
+      --card-bg: linear-gradient(160deg,rgba(255,250,235,.97) 0%,rgba(245,238,215,.99) 100%);
+    }
+    body.theme-water {
+      --deep:#dff0f8; --panel:#c8e4f2; --white:#0a1a2e; --muted:#3a6080;
+      --dim:#7ab0cc; --border:rgba(0,0,0,0.09);
+      --card-bg: linear-gradient(160deg,rgba(220,240,252,.97) 0%,rgba(200,228,245,.99) 100%);
+    }
+    body.theme-earth {
+      --deep:#f0f4e8; --panel:#e2ead0; --white:#1a2008; --muted:#5a7040;
+      --dim:#a0b878; --border:rgba(0,0,0,0.09);
+      --card-bg: linear-gradient(160deg,rgba(238,245,220,.97) 0%,rgba(224,235,200,.99) 100%);
+    }
+    body.theme-parchment .bg-layer { filter: blur(8px) brightness(0.45) saturate(.7); }
+    body.theme-water    .bg-layer  { filter: blur(8px) brightness(0.4) saturate(1.2) hue-rotate(190deg); }
+    body.theme-earth    .bg-layer  { filter: blur(8px) brightness(0.4) saturate(1.1) hue-rotate(55deg); }
+    body.theme-parchment .hero-main,
+    body.theme-water    .hero-main,
+    body.theme-earth    .hero-main { background: linear-gradient(135deg,var(--white) 0%,var(--muted) 50%,var(--gold,#c9a84c) 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    body.theme-parchment .search-results,
+    body.theme-water    .search-results,
+    body.theme-earth    .search-results { background: rgba(255,255,255,.97); border-color: rgba(0,0,0,.12); }
+    body.theme-parchment .sr-title,
+    body.theme-water    .sr-title,
+    body.theme-earth    .sr-title { color: var(--white); }
+    .hub-card { background: var(--card-bg); }
+    .search-input { background: rgba(10,17,28,.8); }
+    body.theme-parchment .search-input,
+    body.theme-water    .search-input,
+    body.theme-earth    .search-input { background: rgba(255,255,255,.8); border-color: rgba(0,0,0,.15); color: var(--white); }
+    body.theme-parchment .search-input::placeholder,
+    body.theme-water    .search-input::placeholder,
+    body.theme-earth    .search-input::placeholder { color: var(--dim); }
+
+    /* ── Theme toggle button ── */
+    #themeBtn {
+      position: fixed; bottom: 14px; left: 220px; z-index: 50;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Cinzel', serif; font-size: .42rem; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(201,168,76,.6); background: none; border: 1px solid rgba(201,168,76,.25);
+      border-radius: 20px; padding: .35em 1em; cursor: pointer;
+      transition: color .25s, border-color .25s, background .25s; opacity: .75;
+    }
+    #themeBtn:hover { color: var(--gold); border-color: rgba(201,168,76,.65); background: rgba(201,168,76,.08); opacity: 1; }
+    /* Theme picker popup */
+    #themePicker {
+      position: fixed; bottom: 48px; left: 220px; z-index: 100;
+      background: rgba(8,13,24,.97); border: 1px solid rgba(201,168,76,.25);
+      border-radius: 14px; padding: .7rem .6rem; display: none; flex-direction: column; gap: .4rem;
+      backdrop-filter: blur(20px); box-shadow: 0 8px 32px rgba(0,0,0,.6); min-width: 160px;
+    }
+    #themePicker.open { display: flex; }
+    .theme-opt {
+      font-family: 'Cinzel', serif; font-size: .44rem; letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(240,244,255,.7); background: none; border: none; text-align: left;
+      padding: .45em .8em; border-radius: 8px; cursor: pointer;
+      transition: background .15s, color .15s; display: flex; align-items: center; gap: .6rem;
+    }
+    .theme-opt:hover { background: rgba(255,255,255,.07); color: var(--white,#f0f4ff); }
+    .theme-opt.active { color: var(--gold,#c9a84c); }
+    .theme-swatch { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    @media(max-width:640px) {
+      #themeBtn { left: auto; right: 18px; bottom: 52px; }
+      #themePicker { left: auto; right: 18px; bottom: 96px; }
     }
 
     @keyframes slideUp    { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
@@ -108,7 +178,17 @@
     }
     body.page-ready .cards-section { animation: slideUp 1s cubic-bezier(.22,1,.36,1) .28s both; }
     @media(max-width:1100px){ .cards-section{ grid-template-columns:repeat(2,1fr); } }
-    @media(max-width:640px){ .cards-section{ grid-template-columns:1fr; max-width:480px; } }
+    @media(max-width:640px){
+      .cards-section{ grid-template-columns:1fr; max-width:100%; padding-left:0; padding-right:0; gap:1rem; }
+      .hub-card { border-radius:14px; }
+      .card-poster { aspect-ratio: 21/9; }
+      .card-body { padding: 1.1rem 1.2rem 1.4rem; }
+      .card-title { font-size: 1.05rem; }
+      .card-sub   { font-size: .85rem; }
+      .card-label { font-size: .48rem; }
+      .card-tag   { font-size: .44rem; padding: .3em .9em; }
+      .card-cta   { font-size: .52rem; padding-top: .85rem; }
+    }
 
     .hub-card {
       position: relative;
@@ -610,7 +690,7 @@
     </a>
 
     <!-- ATLA Games -->
-    <div class="hub-card games">
+    <a href="games.html" class="hub-card games">
       <div class="card-poster">
         <div class="card-poster-bg" style="background-image:url('images/gamesbg.png')"></div>
         <div class="card-poster-overlay"></div>
@@ -624,26 +704,12 @@
           <span class="card-tag">Download</span>
         </div>
         <div class="card-divider"></div>
-        <div style="display:flex;flex-direction:column;gap:.55rem;margin-top:.6rem;">
-          <a href="https://store.steampowered.com/search/?term=avatar+last+airbender+generations" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:.55rem;text-decoration:none;color:var(--white);font-family:'Philosopher',serif;font-size:clamp(.75rem,1.3vw,.88rem);padding:.45em .7em;border-radius:10px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18);transition:background .2s,border-color .2s;" onmouseover="this.style.background='rgba(61,220,132,.14)';this.style.borderColor='rgba(61,220,132,.38)'" onmouseout="this.style.background='rgba(61,220,132,.07)';this.style.borderColor='rgba(61,220,132,.18)'">
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;opacity:.7"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
-            Atla Generations
-          </a>
-          <a href="https://store.steampowered.com/search/?term=avatar+last+airbender+quest+for+balance" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:.55rem;text-decoration:none;color:var(--white);font-family:'Philosopher',serif;font-size:clamp(.75rem,1.3vw,.88rem);padding:.45em .7em;border-radius:10px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18);transition:background .2s,border-color .2s;" onmouseover="this.style.background='rgba(61,220,132,.14)';this.style.borderColor='rgba(61,220,132,.38)'" onmouseout="this.style.background='rgba(61,220,132,.07)';this.style.borderColor='rgba(61,220,132,.18)'">
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;opacity:.7"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
-            Atla Quest for Balance
-          </a>
-          <a href="https://www.magpiegames.com/pages/avatar-legends" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:.55rem;text-decoration:none;color:var(--white);font-family:'Philosopher',serif;font-size:clamp(.75rem,1.3vw,.88rem);padding:.45em .7em;border-radius:10px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18);transition:background .2s,border-color .2s;" onmouseover="this.style.background='rgba(61,220,132,.14)';this.style.borderColor='rgba(61,220,132,.38)'" onmouseout="this.style.background='rgba(61,220,132,.07)';this.style.borderColor='rgba(61,220,132,.18)'">
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;opacity:.7"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
-            Avatar Legends
-          </a>
-          <a href="https://store.steampowered.com/search/?term=avatar+ultra+lite" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:.55rem;text-decoration:none;color:var(--white);font-family:'Philosopher',serif;font-size:clamp(.75rem,1.3vw,.88rem);padding:.45em .7em;border-radius:10px;background:rgba(61,220,132,.07);border:1px solid rgba(61,220,132,.18);transition:background .2s,border-color .2s;" onmouseover="this.style.background='rgba(61,220,132,.14)';this.style.borderColor='rgba(61,220,132,.38)'" onmouseout="this.style.background='rgba(61,220,132,.07)';this.style.borderColor='rgba(61,220,132,.18)'">
-            <svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;opacity:.7"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
-            Ultra Lite
-          </a>
+        <div class="card-cta">
+          Browse Games
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
         </div>
       </div>
-    </div>
+    </a>
 
   </div>
 
@@ -731,6 +797,49 @@
   <svg viewBox="0 0 24 24" style="width:9px;height:9px;fill:#ff1c1c;flex-shrink:0"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
   Jeffrey Creates
 </a>
+
+<!-- ── Theme Toggle ── -->
+<button id="themeBtn" title="Change theme">
+  <svg viewBox="0 0 24 24" fill="currentColor" style="width:10px;height:10px;flex-shrink:0"><path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/></svg>
+  Theme
+</button>
+<div id="themePicker">
+  <button class="theme-opt active" data-theme="dark">
+    <span class="theme-swatch" style="background:#04070d;border:1px solid rgba(255,255,255,.2)"></span> Dark
+  </button>
+  <button class="theme-opt" data-theme="theme-parchment">
+    <span class="theme-swatch" style="background:#c9a84c"></span> Parchment
+  </button>
+  <button class="theme-opt" data-theme="theme-water">
+    <span class="theme-swatch" style="background:#4db8ff"></span> Water
+  </button>
+  <button class="theme-opt" data-theme="theme-earth">
+    <span class="theme-swatch" style="background:#6abf69"></span> Earth
+  </button>
+</div>
+
+<script>
+/* ── Theme toggle ── */
+(function(){
+  const btn    = document.getElementById('themeBtn');
+  const picker = document.getElementById('themePicker');
+  const opts   = picker.querySelectorAll('.theme-opt');
+  const THEMES = ['dark','theme-parchment','theme-water','theme-earth'];
+  const saved  = localStorage.getItem('avatarhub_theme') || 'dark';
+
+  function applyTheme(t) {
+    THEMES.forEach(th => document.body.classList.remove(th));
+    if (t !== 'dark') document.body.classList.add(t);
+    opts.forEach(o => o.classList.toggle('active', o.dataset.theme === t));
+    localStorage.setItem('avatarhub_theme', t);
+  }
+  applyTheme(saved);
+
+  btn.addEventListener('click', e => { e.stopPropagation(); picker.classList.toggle('open'); });
+  opts.forEach(o => o.addEventListener('click', () => { applyTheme(o.dataset.theme); picker.classList.remove('open'); }));
+  document.addEventListener('click', e => { if (!e.target.closest('#themeBtn') && !e.target.closest('#themePicker')) picker.classList.remove('open'); });
+})();
+</script>
 
 <script>
 /* ══════════════════════════════════════════
