@@ -156,6 +156,32 @@
     @keyframes pageFlip { 0%{opacity:0;transform:scaleX(.92)} 100%{opacity:1;transform:scaleX(1)} }
     #pdfSpread.flip { animation:pageFlip .18s ease both; }
 
+    /* Fullscreen reader */
+    .viewer-frame:fullscreen,
+    .viewer-frame:-webkit-full-screen {
+      background: #0a0a0a;
+      display: flex; flex-direction: column;
+      border-radius: 0; padding: 0;
+    }
+    .viewer-frame:fullscreen .viewer-shell,
+    .viewer-frame:-webkit-full-screen .viewer-shell { border-radius: 0; flex: 1; }
+    .viewer-frame:fullscreen #pdfSpread,
+    .viewer-frame:-webkit-full-screen #pdfSpread { flex: 1; min-height: 0; }
+    .viewer-frame:fullscreen .viewer-controls,
+    .viewer-frame:-webkit-full-screen .viewer-controls { border-radius: 0; }
+    /* Swipe hint overlay (mobile) */
+    .swipe-hint {
+      position: absolute; bottom: 60px; left: 50%; transform: translateX(-50%);
+      font-family: 'Cinzel', serif; font-size: .4rem; letter-spacing: .25em;
+      text-transform: uppercase; color: rgba(168,124,204,.6);
+      pointer-events: none; z-index: 20;
+      opacity: 0; transition: opacity .5s;
+    }
+    .swipe-hint.show { opacity: 1; }
+    /* Drag cursor on spread */
+    #pdfSpread { cursor: grab; }
+    #pdfSpread.dragging { cursor: grabbing; }
+
     /* Page controls bar */
     .viewer-controls { display:flex; align-items:center; justify-content:space-between; gap:.75rem; padding:.85rem 1.5rem; background:rgba(8,12,22,.9); backdrop-filter:blur(28px); border-top:1px solid rgba(255,255,255,.07); border-radius:0 0 16px 16px; flex-wrap:wrap; }
     .vcbtn { font-family:'Cinzel',serif; font-size:.48rem; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); background:none; border:1px solid var(--dim); padding:.45em 1.2em; border-radius:20px; cursor:pointer; transition:color .2s,border-color .2s,background .2s; text-decoration:none; display:flex; align-items:center; gap:.4em; white-space:nowrap; }
@@ -211,9 +237,56 @@
       .info-divider { display:none; }
       .book-grid { grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); }
     }
-  </style>
+  
+    /* ── Cross-page theme variables ── */
+    body.theme-parchment {
+      --deep:#f5efe0; --panel:#ede4ce; --white:#1a1008; --muted:#7a6040;
+      --dim:#b8a880; --border:rgba(0,0,0,0.10); --gold:#9a6820;
+      --card-bg: linear-gradient(160deg,rgba(255,250,235,.97) 0%,rgba(245,238,215,.99) 100%);
+    }
+    body.theme-water {
+      --deep:#dff0f8; --panel:#c8e4f2; --white:#0a1a2e; --muted:#3a6080;
+      --dim:#7ab0cc; --border:rgba(0,0,0,0.09);
+      --card-bg: linear-gradient(160deg,rgba(220,240,252,.97) 0%,rgba(200,228,245,.99) 100%);
+    }
+    body.theme-earth {
+      --deep:#f0f4e8; --panel:#e2ead0; --white:#1a2008; --muted:#5a7040;
+      --dim:#a0b878; --border:rgba(0,0,0,0.09);
+      --card-bg: linear-gradient(160deg,rgba(238,245,220,.97) 0%,rgba(224,235,200,.99) 100%);
+    }
+    body.theme-parchment .bg-layer { filter: blur(8px) brightness(0.45) saturate(.7); }
+    body.theme-water    .bg-layer  { filter: blur(8px) brightness(0.4) saturate(1.2) hue-rotate(190deg); }
+    body.theme-earth    .bg-layer  { filter: blur(8px) brightness(0.4) saturate(1.1) hue-rotate(55deg); }
+    body.theme-parchment,body.theme-water,body.theme-earth { background: var(--deep); color: var(--white); }
+    body.theme-parchment header,body.theme-water header,body.theme-earth header { border-color: rgba(0,0,0,.1); }
+    body.theme-parchment .back-link,body.theme-water .back-link,body.theme-earth .back-link { color: var(--muted); border-color: var(--dim); }
+    body.theme-parchment .header-tag,body.theme-water .header-tag,body.theme-earth .header-tag { color: var(--muted); border-color: var(--dim); }
+    body.theme-parchment .ep-card,body.theme-water .ep-card,body.theme-earth .ep-card { background: rgba(255,255,255,.6); border-color: rgba(0,0,0,.1); }
+    body.theme-parchment .ep-title-text,body.theme-water .ep-title-text,body.theme-earth .ep-title-text { color: var(--white); }
+    body.theme-parchment .ep-num,body.theme-water .ep-num,body.theme-earth .ep-num { color: var(--muted); }
+    body.theme-parchment .section-divider-line,body.theme-water .section-divider-line,body.theme-earth .section-divider-line { background: rgba(0,0,0,.1); }
+    body.theme-parchment .info-title,body.theme-water .info-title,body.theme-earth .info-title { -webkit-text-fill-color: var(--white); color: var(--white); }
+    body.theme-parchment .info-synopsis,body.theme-water .info-synopsis,body.theme-earth .info-synopsis { color: var(--white); }
+    body.theme-parchment .genre-tag,body.theme-water .genre-tag,body.theme-earth .genre-tag { color: var(--muted); border-color: var(--dim); }
+    body.theme-parchment .stat-value,body.theme-water .stat-value,body.theme-earth .stat-value { color: var(--white); }
+    body.theme-parchment .viewer-controls,body.theme-water .viewer-controls,body.theme-earth .viewer-controls { background: rgba(255,255,255,.88); }
+    body.theme-parchment .vcbtn,body.theme-water .vcbtn,body.theme-earth .vcbtn { color: var(--muted); border-color: var(--dim); }
+    body.theme-parchment .book-card,body.theme-water .book-card,body.theme-earth .book-card { background: rgba(255,255,255,.65); border-color: rgba(0,0,0,.1); }
+    body.theme-parchment .book-title-text,body.theme-water .book-title-text,body.theme-earth .book-title-text { color: var(--white); }
+    body.theme-parchment .game-card,body.theme-water .game-card,body.theme-earth .game-card { background: rgba(255,255,255,.65); border-color: rgba(0,0,0,.1); }
+    body.theme-parchment .game-title,body.theme-water .game-title,body.theme-earth .game-title { color: var(--white); }
+    body.theme-parchment .game-desc,body.theme-water .game-desc,body.theme-earth .game-desc { color: var(--muted); }
+    body.theme-parchment .game-tag,body.theme-water .game-tag,body.theme-earth .game-tag { color: var(--muted); border-color: var(--dim); }
+</style>
 </head>
 <body>
+<script>
+/* Apply saved theme immediately */
+(function(){
+  var t=localStorage.getItem("avatarhub_theme");
+  if(t&&t!=="dark") document.body.classList.add(t);
+})();
+</script>
 
 <div id="introOverlay" title="Click to enter">
   <p class="intro-tagline">Four elements. One destiny.</p>
@@ -316,6 +389,10 @@
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
               Open PDF
             </a>
+            <button class="vcbtn" id="fsBookBtn" title="Fullscreen">
+              <svg id="fsIconOpen" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+              <svg id="fsIconClose" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -814,6 +891,111 @@ document.body.addEventListener('animationend', function onReady(e) {
     });
   }, { threshold: .08 });
   els.forEach(el => io.observe(el));
+})();
+
+/* ─── Fullscreen toggle ─── */
+(function(){
+  const fsBtn       = document.getElementById('fsBookBtn');
+  const fsOpen      = document.getElementById('fsIconOpen');
+  const fsClose     = document.getElementById('fsIconClose');
+  const viewerFrame = document.querySelector('.viewer-frame');
+  if (!fsBtn || !viewerFrame) return;
+
+  function updateFsIcons() {
+    const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    fsOpen.style.display  = inFs ? 'none' : '';
+    fsClose.style.display = inFs ? ''     : 'none';
+  }
+
+  fsBtn.addEventListener('click', () => {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    } else {
+      if (viewerFrame.requestFullscreen) viewerFrame.requestFullscreen().catch(()=>{});
+      else if (viewerFrame.webkitRequestFullscreen) viewerFrame.webkitRequestFullscreen();
+    }
+  });
+
+  document.addEventListener('fullscreenchange', updateFsIcons);
+  document.addEventListener('webkitfullscreenchange', updateFsIcons);
+  /* Keyboard shortcut F */
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.code === 'KeyF') fsBtn.click();
+    if (e.code === 'ArrowRight' || e.code === 'KeyL') document.getElementById('nextPageBtn')?.click();
+    if (e.code === 'ArrowLeft'  || e.code === 'KeyJ') document.getElementById('prevPageBtn')?.click();
+  });
+})();
+
+/* ─── Swipe (touch) + Mouse drag page turning ─── */
+(function(){
+  const spread = document.getElementById('pdfSpread');
+  if (!spread) return;
+  const THRESHOLD = 60; // px drag needed to turn page
+
+  // Touch swipe
+  let touchStartX = null;
+  spread.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+  }, { passive: true });
+  spread.addEventListener('touchend', e => {
+    if (touchStartX === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if (Math.abs(dx) < THRESHOLD) return;
+    if (dx < 0) {
+      // Swipe left → next page
+      document.getElementById('nextPageBtn')?.click();
+    } else {
+      // Swipe right → prev page
+      document.getElementById('prevPageBtn')?.click();
+    }
+  }, { passive: true });
+
+  // Mouse drag (click-and-drag left/right)
+  let mouseStartX = null;
+  let dragging    = false;
+  spread.addEventListener('mousedown', e => {
+    mouseStartX = e.clientX;
+    dragging = false;
+  });
+  spread.addEventListener('mousemove', e => {
+    if (mouseStartX === null) return;
+    if (Math.abs(e.clientX - mouseStartX) > 8) {
+      dragging = true;
+      spread.classList.add('dragging');
+    }
+  });
+  spread.addEventListener('mouseup', e => {
+    spread.classList.remove('dragging');
+    if (!dragging || mouseStartX === null) { mouseStartX = null; return; }
+    const dx = e.clientX - mouseStartX;
+    mouseStartX = null;
+    dragging = false;
+    if (Math.abs(dx) < THRESHOLD) return;
+    if (dx < 0) {
+      document.getElementById('nextPageBtn')?.click();
+    } else {
+      document.getElementById('prevPageBtn')?.click();
+    }
+  });
+  spread.addEventListener('mouseleave', () => {
+    spread.classList.remove('dragging');
+    mouseStartX = null;
+    dragging = false;
+  });
+
+  // Show swipe hint on mobile first open
+  if ('ontouchstart' in window) {
+    const hint = document.createElement('div');
+    hint.className = 'swipe-hint';
+    hint.textContent = '← Swipe to turn page →';
+    spread.appendChild(hint);
+    setTimeout(() => {
+      hint.classList.add('show');
+      setTimeout(() => hint.classList.remove('show'), 2800);
+    }, 800);
+  }
 })();
 </script>
 </body>
