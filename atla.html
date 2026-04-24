@@ -46,7 +46,7 @@
     /* Intro overlay */
     #introOverlay{position:fixed;inset:0;z-index:100;background:rgba(4,7,13,.72);backdrop-filter:blur(2px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3rem;cursor:pointer;}
     #introOverlay.fade-out{animation:overlayOut .65s ease forwards;pointer-events:none;}
-    .intro-tagline{font-family:'Philosopher',serif;font-size:clamp(.6rem,1.6vw,.8rem);font-style:italic;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,180,120,.55);opacity:0;transition:opacity .6s ease .15s;}
+    .intro-tagline{font-family:'Philosopher',serif;font-size:clamp(.6rem,1.6vw,.8rem);font-style:italic;letter-spacing:.5em;text-transform:uppercase;color:rgba(240,244,255,.8);opacity:0;transition:opacity .6s ease .15s;}
     #introOverlay.symbols-in .intro-tagline{opacity:1;}
     .symbols-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(2rem,5vw,5rem);align-items:center;justify-items:center;}
     @media(max-width:600px){.symbols-grid{grid-template-columns:repeat(2,1fr);gap:2rem}}
@@ -867,7 +867,9 @@ let currentEp=null, autoFrame=null, autoStart=null;
 const overlay=document.getElementById('introOverlay'); let dismissed=false;
 requestAnimationFrame(()=>setTimeout(()=>overlay.classList.add('symbols-in'),80));
 function dismissOverlay(){ if(dismissed)return;dismissed=true;overlay.classList.add('fade-out');setTimeout(()=>{overlay.style.display='none';document.body.classList.add('page-ready');},650); }
-overlay.addEventListener('click',dismissOverlay,{once:true}); setTimeout(dismissOverlay,2800);
+overlay.addEventListener('click',dismissOverlay,{once:true});
+/* Auto-dismiss after a brief animation — no click required */
+setTimeout(dismissOverlay, 1400);
 
 /* Player refs */
 const vid=document.getElementById('mainVideo'),shell=document.getElementById('playerShell'),bigPlay=document.getElementById('bigPlay'),clickArea=document.getElementById('clickArea'),playBtn=document.getElementById('playBtn'),icPlay=document.getElementById('icPlay'),icPause=document.getElementById('icPause'),curEl=document.getElementById('curTime'),durEl=document.getElementById('durTime'),progFill=document.getElementById('progFill'),progBuf=document.getElementById('progBuf'),progThumb=document.getElementById('progThumb'),prog=document.getElementById('prog'),volBtn=document.getElementById('volBtn'),volSlider=document.getElementById('volSlider'),icVolOn=document.getElementById('icVolOn'),icVolOff=document.getElementById('icVolOff'),playerFrame=document.getElementById('playerFrame'),skipBtn=document.getElementById('skipIntroBtn'),nextPanel=document.getElementById('nextEpPanel'),nepTitle=document.getElementById('nepTitle'),nepBtn=document.getElementById('nepBtn'),nepProgress=document.getElementById('nepProgress'),nepSkip=document.getElementById('nepSkip'),bufSpin=document.getElementById('bufferSpinner'),ccBtn=document.getElementById('ccBtn'),captionBox=document.getElementById('captionBox');
@@ -1274,6 +1276,66 @@ ccBtn.addEventListener('click',()=>{
       .catch(()=>{});
   }
 });
+</script>
+
+<script>
+/* ══════════════════════════════════════════
+   BACKGROUND AMBIENT — seamless cross-page
+   Resumes ambient if it was playing on the previous page.
+══════════════════════════════════════════ */
+(function(){
+  const AMBIENT_SRC = 'audio/ambient.MP3';
+  const MUTED_KEY   = 'avatarhub_ambient_off';
+  const SESSION_KEY = 'avatarhub_ambient_active';
+
+  if (localStorage.getItem(MUTED_KEY) === '1') return; // user turned it off
+  if (sessionStorage.getItem(SESSION_KEY) !== '1') return; // wasn't playing
+
+  let audioCtx = null, gainNode = null, src = null;
+  let rawBuf = null;
+
+  // Pre-fetch bytes immediately
+  fetch(AMBIENT_SRC).then(r => r.ok ? r.arrayBuffer() : null).then(b => { rawBuf = b; tryStart(); }).catch(()=>{});
+
+  function tryStart() {
+    if (!rawBuf || audioCtx) return;
+    // Try to create and resume context (may need a gesture on some browsers)
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+    audioCtx.resume().then(() => {
+      if (audioCtx.state !== 'running') { scheduleRetry(); return; }
+      audioCtx.decodeAudioData(rawBuf.slice(0)).then(buf => {
+        src = audioCtx.createBufferSource();
+        src.buffer = buf; src.loop = true;
+        gainNode = audioCtx.createGain(); gainNode.gain.value = 0;
+        src.connect(gainNode); gainNode.connect(audioCtx.destination);
+        src.start(0);
+        // Fade in
+        let v = 0;
+        const fade = setInterval(() => {
+          v = Math.min(0.55, v + 0.015);
+          gainNode.gain.value = v;
+          if (v >= 0.55) clearInterval(fade);
+        }, 60);
+        sessionStorage.setItem(SESSION_KEY, '1');
+      }).catch(()=>{});
+    }).catch(()=>{});
+  }
+
+  function scheduleRetry() {
+    // Retry on first user interaction if context was blocked
+    const handler = () => {
+      audioCtx.resume().then(() => { if (!src) tryStart(); });
+      document.removeEventListener('click', handler);
+      document.removeEventListener('keydown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+    document.addEventListener('click', handler, { once: true });
+    document.addEventListener('keydown', handler, { once: true });
+    document.addEventListener('touchstart', handler, { once: true, passive: true });
+  }
+
+  tryStart();
+})();
 </script>
 </body>
 </html>

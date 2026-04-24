@@ -115,7 +115,7 @@
       font-style: italic;
       letter-spacing: 0.5em;
       text-transform: uppercase;
-      color: rgba(200, 180, 120, 0.55);
+      color: rgba(240,244,255,.8);
       opacity: 0;
       transition: opacity 0.6s ease 0.15s;
     }
@@ -1309,7 +1309,7 @@ function dismissOverlay() {
 overlay.addEventListener('click', dismissOverlay, { once: true });
 
 // Auto-dismiss after 2.8s (gives symbols time to breathe)
-setTimeout(dismissOverlay, 2800);
+setTimeout(dismissOverlay, 1400);
 
 /* ══════════════════════════════════════════════
    Video player
@@ -1889,6 +1889,43 @@ window.addEventListener('pagehide', () => {
 });
 
 
+</script>
+
+<script>
+/* ══════════════════════════════════════════
+   BACKGROUND AMBIENT — seamless cross-page
+══════════════════════════════════════════ */
+(function(){
+  const AMBIENT_SRC = 'audio/ambient.MP3';
+  const MUTED_KEY   = 'avatarhub_ambient_off';
+  const SESSION_KEY = 'avatarhub_ambient_active';
+  if (localStorage.getItem(MUTED_KEY) === '1') return;
+  if (sessionStorage.getItem(SESSION_KEY) !== '1') return;
+  let audioCtx = null, gainNode = null, src = null, rawBuf = null;
+  fetch(AMBIENT_SRC).then(r => r.ok ? r.arrayBuffer() : null).then(b => { rawBuf = b; tryStart(); }).catch(()=>{});
+  function tryStart() {
+    if (!rawBuf || audioCtx) return;
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+    audioCtx.resume().then(() => {
+      if (audioCtx.state !== 'running') { scheduleRetry(); return; }
+      audioCtx.decodeAudioData(rawBuf.slice(0)).then(buf => {
+        src = audioCtx.createBufferSource(); src.buffer = buf; src.loop = true;
+        gainNode = audioCtx.createGain(); gainNode.gain.value = 0;
+        src.connect(gainNode); gainNode.connect(audioCtx.destination); src.start(0);
+        let v = 0;
+        const fade = setInterval(() => { v = Math.min(0.55, v + 0.015); gainNode.gain.value = v; if (v >= 0.55) clearInterval(fade); }, 60);
+        sessionStorage.setItem(SESSION_KEY, '1');
+      }).catch(()=>{});
+    }).catch(()=>{});
+  }
+  function scheduleRetry() {
+    const h = () => { audioCtx.resume().then(() => { if (!src) tryStart(); }); };
+    document.addEventListener('click', h, { once: true });
+    document.addEventListener('keydown', h, { once: true });
+    document.addEventListener('touchstart', h, { once: true, passive: true });
+  }
+  tryStart();
+})();
 </script>
 </body>
 </html>

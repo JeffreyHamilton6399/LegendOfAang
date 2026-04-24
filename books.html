@@ -38,7 +38,7 @@
     /* Intro overlay */
     #introOverlay { position:fixed; inset:0; z-index:100; background:rgba(4,7,13,.72); backdrop-filter:blur(2px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3rem; cursor:pointer; }
     #introOverlay.fade-out { animation:overlayOut .65s ease forwards; pointer-events:none; }
-    .intro-tagline { font-family:'Philosopher',serif; font-size:clamp(.6rem,1.6vw,.8rem); font-style:italic; letter-spacing:.5em; text-transform:uppercase; color:rgba(200,180,120,.55); opacity:0; transition:opacity .6s ease .15s; }
+    .intro-tagline { font-family:'Philosopher',serif; font-size:clamp(.6rem,1.6vw,.8rem); font-style:italic; letter-spacing:.5em; text-transform:uppercase; color: rgba(240,244,255,.8); opacity:0; transition:opacity .6s ease .15s; }
     #introOverlay.symbols-in .intro-tagline { opacity:1; }
     .symbols-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(2rem,5vw,5rem); align-items:center; justify-items:center; }
     @media(max-width:600px){ .symbols-grid{ grid-template-columns:repeat(2,1fr); gap:2rem; } }
@@ -943,7 +943,7 @@ function dismissOverlay(){
   setTimeout(() => { overlay.style.display = 'none'; document.body.classList.add('page-ready'); }, 650);
 }
 overlay.addEventListener('click', dismissOverlay, { once: true });
-setTimeout(dismissOverlay, 2800);
+setTimeout(dismissOverlay, 1400);
 
 /* ─── Series dropdown ─── */
 document.body.appendChild(dropdown);
@@ -1171,6 +1171,43 @@ document.body.addEventListener('animationend', function onReady(e) {
       setTimeout(() => hint.classList.remove('show'), 2800);
     }, 800);
   }
+})();
+</script>
+
+<script>
+/* ══════════════════════════════════════════
+   BACKGROUND AMBIENT — seamless cross-page
+══════════════════════════════════════════ */
+(function(){
+  const AMBIENT_SRC = 'audio/ambient.MP3';
+  const MUTED_KEY   = 'avatarhub_ambient_off';
+  const SESSION_KEY = 'avatarhub_ambient_active';
+  if (localStorage.getItem(MUTED_KEY) === '1') return;
+  if (sessionStorage.getItem(SESSION_KEY) !== '1') return;
+  let audioCtx = null, gainNode = null, src = null, rawBuf = null;
+  fetch(AMBIENT_SRC).then(r => r.ok ? r.arrayBuffer() : null).then(b => { rawBuf = b; tryStart(); }).catch(()=>{});
+  function tryStart() {
+    if (!rawBuf || audioCtx) return;
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+    audioCtx.resume().then(() => {
+      if (audioCtx.state !== 'running') { scheduleRetry(); return; }
+      audioCtx.decodeAudioData(rawBuf.slice(0)).then(buf => {
+        src = audioCtx.createBufferSource(); src.buffer = buf; src.loop = true;
+        gainNode = audioCtx.createGain(); gainNode.gain.value = 0;
+        src.connect(gainNode); gainNode.connect(audioCtx.destination); src.start(0);
+        let v = 0;
+        const fade = setInterval(() => { v = Math.min(0.55, v + 0.015); gainNode.gain.value = v; if (v >= 0.55) clearInterval(fade); }, 60);
+        sessionStorage.setItem(SESSION_KEY, '1');
+      }).catch(()=>{});
+    }).catch(()=>{});
+  }
+  function scheduleRetry() {
+    const h = () => { audioCtx.resume().then(() => { if (!src) tryStart(); }); };
+    document.addEventListener('click', h, { once: true });
+    document.addEventListener('keydown', h, { once: true });
+    document.addEventListener('touchstart', h, { once: true, passive: true });
+  }
+  tryStart();
 })();
 </script>
 </body>
