@@ -1016,7 +1016,7 @@
         <video id="mainVideo" preload="none" playsinline
                poster="images/liveshowpreview.png">
           <source src="https://github.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/releases/download/liveshow/liveshow.mp4#t=0.001" type="video/mp4">
-          <track kind="subtitles" src="https://github.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/releases/download/liveshow/liveshow.srt" srclang="en" label="English" default>
+          <track kind="subtitles" src="captions/liveshow.srt" srclang="en" label="English" default>
         </video>
 
         <div class="big-play" id="bigPlay">
@@ -1593,7 +1593,7 @@ function parseSRT(text) {
   }, []);
 }
 
-const CAPTIONS_URL = 'https://github.com/JeffreyHamilton6399/Legend-of-Aang-The-Last-Airbender/releases/download/liveshow/liveshow.srt';
+const CAPTIONS_URL = 'captions/liveshow.srt';
 fetch(CAPTIONS_URL)
   .then(r => r.ok ? r.text() : Promise.reject())
   .then(text => { srtCues = parseSRT(text); })
@@ -1871,14 +1871,6 @@ window.addEventListener('pagehide', () => {
 });
 
 
-</script>
-<!-- ── Whisper AI Captions ── -->
-<script src="whisper-captions.js"></script>
-<script>
-(function(){
-  if (typeof WhisperCaptions === 'undefined') return;
-  WhisperCaptions.injectButton(ccBtn, vid, captionBox, 'liveshow', 'main');
-})();
 </script>
 </body>
 </html>

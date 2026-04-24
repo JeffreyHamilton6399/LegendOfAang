@@ -850,7 +850,14 @@ const BOOKS = [
 
 function epUrl(b,n){ const bd=BOOKS[b-1]; return `${GH}/${bd.tag}/S${b}E${n}.${bd.ext}`; }
 function epMime(b){ return BOOKS[b-1].ext==='mp4'?'video/mp4':'video/x-matroska'; }
-function subUrl(b,n){ const tag=BOOKS[b-1].tag; return `${GH}/${tag}/s${b}e${String(n).padStart(2,'0')}.srt`; }
+function subUrl(b,n){
+  const bd=BOOKS[b-1];
+  const title=bd.episodes[n-1];
+  const nn=String(n).padStart(2,'0');
+  const folder=`captions/The_Legend_of_Korra - season ${b}.en`;
+  const file=`The Legend of Korra - ${b}x${nn} - ${title}.en`;
+  return `${folder}/${file}`;
+}
 function getNext(b,n){ const bd=BOOKS[b-1]; if(n<bd.episodes.length) return{book:b,num:n+1,title:bd.episodes[n]}; if(b<4) return{book:b+1,num:1,title:BOOKS[b].episodes[0]}; return null; }
 
 /* State */
@@ -1006,8 +1013,6 @@ ccBtn.addEventListener('click',()=>{captionsOn=!captionsOn;ccBtn.classList.toggl
 
 /* Load episode */
 function loadEpisode(book,epNum){
-  /* Stop any active Whisper capture before changing the video source */
-  if(typeof WhisperCaptions!=='undefined') try{WhisperCaptions._stopCapture();}catch(_){}
   const bData=BOOKS[book-1],title=bData.episodes[epNum-1];
   currentEp={book,num:epNum,title}; hideNextPanel(); panelShown=false; skipBtn.style.display='none';
   srtCues=[];lastCueText=null;hideCaption();
@@ -1218,19 +1223,6 @@ ccBtn.addEventListener('click',()=>{
       .catch(()=>{});
   }
 });
-</script>
-
-<!-- ── Whisper AI Captions ── -->
-<script src="whisper-captions.js"></script>
-<script>
-(function(){
-  if (typeof WhisperCaptions === 'undefined') return;
-  WhisperCaptions.injectButton(
-    ccBtn, vid, captionBox,
-    'korra',
-    () => currentEp ? `b${currentEp.book}_e${currentEp.num}` : 'preview'
-  );
-})();
 </script>
 </body>
 </html>
