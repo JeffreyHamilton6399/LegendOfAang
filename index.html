@@ -1101,8 +1101,8 @@ async function fetchBuffer(url) {
 /* Pre-fetch raw bytes passively (no ctx needed) */
 let _introRaw   = null;
 let _ambientRaw = null;
-fetch('audio/intro.mp3')  .then(r => r.ok ? r.arrayBuffer() : null).then(b => { _introRaw   = b; }).catch(()=>{});
-fetch('audio/ambient.mp3').then(r => r.ok ? r.arrayBuffer() : null).then(b => { _ambientRaw = b; }).catch(()=>{});
+fetch('audio/intro.MP3')  .then(r => r.ok ? r.arrayBuffer() : null).then(b => { _introRaw   = b; }).catch(()=>{});
+fetch('audio/ambient.MP3').then(r => r.ok ? r.arrayBuffer() : null).then(b => { _ambientRaw = b; }).catch(()=>{});
 
 /* Decode pre-fetched raw buffers once ctx exists */
 async function ensureBuffers() {
@@ -1114,8 +1114,8 @@ async function ensureBuffers() {
     try { ambientBuffer = await audioCtx.decodeAudioData(_ambientRaw.slice(0)); } catch(e) {}
   }
   /* Fallback: fetch if passive pre-fetch missed */
-  if (!introBuffer)   introBuffer   = await fetchBuffer('audio/intro.mp3');
-  if (!ambientBuffer) ambientBuffer = await fetchBuffer('audio/ambient.mp3');
+  if (!introBuffer)   introBuffer   = await fetchBuffer('audio/intro.MP3');
+  if (!ambientBuffer) ambientBuffer = await fetchBuffer('audio/ambient.MP3');
 }
 
 function _playBuffer(buf, loop, vol) {
