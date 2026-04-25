@@ -222,7 +222,7 @@
       background: linear-gradient(135deg, #ffffff 0%, #b3d4ff 50%, #4db8ff 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       margin-bottom: 0.5rem;
-    }
+    ; overflow:visible; padding:0.05em 0.1em 0.15em; line-height:1.15;}
     .hero-sub {
       font-family: 'Philosopher', serif; font-weight: 400; font-style: italic;
       font-size: clamp(1.2rem, 3vw, 1.8rem);
@@ -827,7 +827,7 @@
     '#avatarGate .gate-sym{width:clamp(36px,5vw,56px);height:clamp(36px,5vw,56px);object-fit:contain;opacity:.8;}',
     '#avatarGate .gate-title{font-family:"Cinzel Decorative",Georgia,serif;font-size:clamp(1.4rem,4vw,2.4rem);',
     'letter-spacing:.12em;background:linear-gradient(135deg,#fff 0%,#d4e8ff 40%,#4db8ff 100%);',
-    '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;}',
+    '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;overflow:visible;padding:0.05em 0.1em 0.15em;line-height:1.15;}',
     '#avatarGate .gate-sub{font-family:"Philosopher",Georgia,serif;font-style:italic;font-size:clamp(.75rem,1.8vw,1rem);',
     'color:#6b8aab;letter-spacing:.3em;text-transform:uppercase;text-align:center;}',
     '#avatarGate .gate-form{display:flex;flex-direction:column;align-items:center;gap:.9rem;width:min(340px,88vw);}',
@@ -1940,34 +1940,44 @@ window.addEventListener('pagehide', () => {
   if (localStorage.getItem('avatarhub_ambient_off') === '1') return;
   if (sessionStorage.getItem('avatarhub_ambient_active') !== '1') return;
 
-  let ctx = null, raw = null, started = false;
+  // Create AudioContext immediately — decodeAudioData works on suspended context
+  let ctx = null, decoded = null, started = false;
+  try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
 
   fetch('audio/ambient.MP3')
     .then(r => r.ok ? r.arrayBuffer() : null)
-    .then(b => { raw = b; tryPlay(); })
+    .then(buf => buf ? ctx.decodeAudioData(buf) : null)
+    .then(d => { decoded = d; tryPlay(); })
     .catch(() => {});
 
   function tryPlay() {
-    if (!raw || started) return;
-    try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return; }
-    ctx.resume().then(() => {
-      if (ctx.state !== 'running') { onGesture(tryPlay); return; }
-      ctx.decodeAudioData(raw.slice(0)).then(buf => {
-        if (started) return;
-        started = true;
-        const src  = ctx.createBufferSource();
-        const gain = ctx.createGain();
-        src.buffer = buf; src.loop = true; gain.gain.value = 0;
-        src.connect(gain).connect(ctx.destination);
-        src.start(0);
-        let v = 0;
-        const t = setInterval(() => { gain.gain.value = v = Math.min(0.55, v + 0.015); if (v >= 0.55) clearInterval(t); }, 60);
-      }).catch(() => {});
-    }).catch(() => {});
+    if (!decoded || started) return;
+    if (ctx.state === 'suspended') {
+      ctx.resume()
+        .then(() => ctx.state === 'running' ? startAmbient() : onGesture(tryPlay))
+        .catch(() => onGesture(tryPlay));
+      return;
+    }
+    startAmbient();
+  }
+
+  function startAmbient() {
+    if (started || !decoded) return;
+    started = true;
+    const src  = ctx.createBufferSource();
+    const gain = ctx.createGain();
+    src.buffer = decoded; src.loop = true; gain.gain.value = 0;
+    src.connect(gain).connect(ctx.destination);
+    src.start(0);
+    let v = 0;
+    const timer = setInterval(() => {
+      gain.gain.value = v = Math.min(0.55, v + 0.015);
+      if (v >= 0.55) clearInterval(timer);
+    }, 60);
   }
 
   function onGesture(cb) {
-    ['click','keydown','touchstart'].forEach(ev =>
+    ['click', 'keydown', 'touchstart'].forEach(ev =>
       document.addEventListener(ev, cb, { once: true, passive: true })
     );
   }
