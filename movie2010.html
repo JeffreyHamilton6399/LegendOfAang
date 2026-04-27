@@ -1965,7 +1965,7 @@ window.addEventListener('pagehide', () => {
     // Duck ambient when video is playing, restore when paused/ended
     const video = document.getElementById('mainVideo');
     if (video) {
-      video.addEventListener('play',  () => fadeTo(0.05, 0.025));
+      video.addEventListener('play',  () => fadeTo(0, 0.04));
       video.addEventListener('pause', () => fadeTo(0.55, 0.015));
       video.addEventListener('ended', () => fadeTo(0.55, 0.015));
     }

@@ -636,8 +636,8 @@
 
 <script>
 /* ─── PDF.js ─── */
-const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
-const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
+const PDFJS_CDN    = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 /* ─── CONFIG ─── */
 const GH    = 'https://jeffreyhamilton6399.github.io/TheAvatarHub';
@@ -700,13 +700,21 @@ function updatePageUI() {
 let currentSeries  = 0;
 let currentBookIdx = null;
 
-/* ─── Load PDF.js lazily ─── */
+/* ─── Load PDF.js lazily via <script> tag (UMD build — works everywhere) ─── */
 async function ensurePDFJS() {
   if (pdfjsLib) return pdfjsLib;
-  const mod = await import(PDFJS_CDN);
-  pdfjsLib = mod;
-  pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
-  return pdfjsLib;
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = PDFJS_CDN;
+    s.onload = () => {
+      pdfjsLib = window.pdfjsLib;
+      if (!pdfjsLib) { reject(new Error('pdfjsLib not found on window')); return; }
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+      resolve(pdfjsLib);
+    };
+    s.onerror = () => reject(new Error('Failed to load PDF.js script'));
+    document.head.appendChild(s);
+  });
 }
 
 /* ─── Refs ─── */

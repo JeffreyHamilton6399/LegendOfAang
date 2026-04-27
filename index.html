@@ -1141,14 +1141,14 @@
     return src;
   }
 
-  function ambientFadeIn() {
+  function ambientFadeIn(offset) {
     if (ambientActive || !audioCtx || !_ambientDecoded) return;
     clearInterval(fadeTimer);
     const src  = audioCtx.createBufferSource();
     const gain = audioCtx.createGain();
     src.buffer = _ambientDecoded; src.loop = true; gain.gain.value = 0;
     src.connect(gain).connect(audioCtx.destination);
-    src.start(0);
+    src.start(0, offset || 0);
     ambientSrc = src; ambientGain = gain; ambientActive = true;
     ambientBtn.classList.add('active');
     hideSoundNudge();
@@ -1194,7 +1194,13 @@
     if (!ok) { showSoundNudge(); return; }
     await decodeBuffers();
     if (ambientWasActive) {
-      if (!ambientActive && _ambientDecoded) ambientFadeIn();
+      if (!ambientActive && _ambientDecoded) {
+        const t0  = parseInt(sessionStorage.getItem('avatarhub_ambient_t0') || '0');
+        const off = (t0 && _ambientDecoded.duration > 0)
+          ? ((Date.now() - t0) / 1000) % _ambientDecoded.duration
+          : 0;
+        ambientFadeIn(off);
+      }
       return;
     }
     if (_introDecoded) {
