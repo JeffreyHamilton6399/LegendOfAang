@@ -293,6 +293,8 @@
       background: linear-gradient(135deg,#fff 0%,#d4e8ff 40%,#4db8ff 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       margin-bottom: .5rem;
+      padding: 0.1em 0.2em;
+      display: inline-block;
     }
     .hero-sub {
       font-family: 'Philosopher', serif; font-style: italic;
@@ -1144,7 +1146,10 @@
     const gain = audioCtx.createGain();
     src.buffer = _ambientDecoded; src.loop = true; gain.gain.value = 0;
     src.connect(gain).connect(audioCtx.destination);
-    src.start(0, offset || 0);
+    const startAt = (offset != null && offset > 0)
+      ? offset
+      : (_ambientDecoded ? Math.random() * _ambientDecoded.duration : 0);
+    src.start(0, startAt);
     ambientSrc = src; ambientGain = gain; ambientActive = true;
     ambientBtn.classList.add('active');
     hideSoundNudge();
