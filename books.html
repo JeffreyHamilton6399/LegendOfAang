@@ -38,7 +38,7 @@
     /* Intro overlay */
     #introOverlay { position:fixed; inset:0; z-index:100; background:rgba(4,7,13,.72); backdrop-filter:blur(2px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3rem; cursor:pointer; }
     #introOverlay.fade-out { animation:overlayOut .65s ease forwards; pointer-events:none; }
-    .intro-tagline { font-family:'Philosopher',serif; font-size:clamp(.6rem,1.6vw,.8rem); font-style:italic; letter-spacing:.5em; text-transform:uppercase; color: rgba(240,244,255,.8); opacity:0; transition:opacity .6s ease .15s; }
+    .intro-tagline { font-family:'Philosopher',serif; font-size:clamp(.6rem,1.6vw,.8rem); font-style:italic; letter-spacing:.5em; text-transform:uppercase; color:rgba(200,180,120,.55); opacity:0; transition:opacity .6s ease .15s; }
     #introOverlay.symbols-in .intro-tagline { opacity:1; }
     .symbols-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(2rem,5vw,5rem); align-items:center; justify-items:center; }
     @media(max-width:600px){ .symbols-grid{ grid-template-columns:repeat(2,1fr); gap:2rem; } }
@@ -68,7 +68,7 @@
     .back-link:hover { color:var(--gold); border-color:rgba(201,168,76,.4); }
 
     .hero { text-align:center; padding:4rem 2rem 2.5rem; }
-    .hero-main { font-family:'Cinzel Decorative',serif; font-weight:900; font-size:clamp(2rem,5vw,4rem); letter-spacing:.1em; background:linear-gradient(135deg,#fff 0%,#d4b8ff 50%,#a87ccc 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:.4rem; ; overflow:visible; padding:0.05em 0.1em 0.15em; line-height:1.15;}
+    .hero-main { font-family:'Cinzel Decorative',serif; font-weight:900; font-size:clamp(2rem,5vw,4rem); letter-spacing:.1em; background:linear-gradient(135deg,#fff 0%,#d4b8ff 50%,#a87ccc 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:.4rem; }
     .hero-sub { font-family:'Philosopher',serif; font-style:italic; font-size:clamp(.9rem,2.5vw,1.4rem); color:var(--muted); letter-spacing:.25em; margin-bottom:.6rem; }
     .hero-badge { display:inline-block; font-family:'Cinzel',serif; font-size:.5rem; letter-spacing:.3em; text-transform:uppercase; color:var(--books); border:1px solid rgba(var(--books-rgb),.35); padding:.35em 1.2em; border-radius:20px; background:rgba(var(--books-rgb),.06); }
 
@@ -126,7 +126,7 @@
     .corner-earth { animation:pulseGlowEarth 2.6s ease-in-out infinite .8s; }
     .corner-fire  { animation:pulseGlowFire  2.6s ease-in-out infinite 1.2s; }
     .corner-air   { animation:pulseGlowAir   2.6s ease-in-out infinite 0s; }
-    .viewer-shell { background:#111; border-radius:16px; overflow:hidden; position:relative; min-height:0; display:flex; flex-direction:column; }
+    .viewer-shell { background:#111; border-radius:16px; overflow:hidden; position:relative; min-height:600px; display:flex; flex-direction:column; }
     .viewer-placeholder { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.2rem; padding:4rem 2rem; }
     .placeholder-text { font-family:'Cinzel',serif; font-size:.6rem; letter-spacing:.4em; text-transform:uppercase; color:var(--muted); text-align:center; line-height:1.8; }
     .viewer-loading { position:absolute; inset:0; background:rgba(4,7,13,.85); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem; z-index:10; border-radius:16px; opacity:0; pointer-events:none; transition:opacity .3s; }
@@ -136,7 +136,7 @@
 
     /* PDF.js two-page spread reader */
     #pdfReader { display:none; flex-direction:column; flex:1; background:#0d0d0d; border-radius:16px 16px 0 0; overflow:hidden; }
-    #pdfSpread { flex:1; display:flex; align-items:center; justify-content:center; gap:0; padding:1rem; background:#0d0d0d; min-height:0; position:relative; }
+    #pdfSpread { flex:1; display:flex; align-items:center; justify-content:center; gap:0; padding:2rem 1.5rem; background:#0d0d0d; min-height:500px; position:relative; }
     .spread-page { display:flex; align-items:center; justify-content:center; position:relative; }
     .spread-page canvas { display:block; max-width:100%; height:auto; box-shadow:0 6px 32px rgba(0,0,0,.7); }
     /* Left page: shadow on the right (spine), right page: shadow on the left */
@@ -237,31 +237,6 @@
       .info-divider { display:none; }
       .book-grid { grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); }
     }
-    /* ── Mobile portrait: single-page mode, no stretch ── */
-    @media(max-width:600px) and (orientation:portrait) {
-      .viewer-shell { min-height:0; }
-      #pdfSpread { padding:.5rem; flex-direction:column; }
-      .spread-page { width:100%; }
-      .spread-page canvas { width:100% !important; height:auto !important; }
-      .spread-page.left canvas, .spread-page.right canvas { border-radius:3px; box-shadow:0 4px 16px rgba(0,0,0,.6); }
-      .spread-spine { display:none; }
-      .viewer-controls { padding:.6rem .75rem; gap:.4rem; flex-wrap:wrap; justify-content:center; }
-      .ctrl-group { gap:.3rem; }
-      .vcbtn { padding:.4em .7em; font-size:.38rem; }
-      .zoom-wrap { display:none; }
-      .zoom-val { display:none; }
-    }
-    /* ── Mobile fullscreen: use viewport-filling div since iOS blocks requestFullscreen ── */
-    .viewer-frame.fake-fs {
-      position:fixed !important; inset:0 !important; z-index:9000 !important;
-      border-radius:0 !important; padding:0 !important;
-      width:100vw !important; height:100vh !important;
-      background:#000 !important;
-    }
-    .viewer-frame.fake-fs .viewer-shell { border-radius:0; flex:1; min-height:0; }
-    .viewer-frame.fake-fs #pdfSpread { flex:1; min-height:0; padding:.5rem; }
-    .viewer-frame.fake-fs .viewer-controls { border-radius:0; }
-    .viewer-frame.fake-fs .corner { display:none; }
   
     /* ── Cross-page theme variables ── */
     body.theme-parchment {
@@ -302,21 +277,6 @@
     body.theme-parchment .game-title,body.theme-water .game-title,body.theme-earth .game-title { color: var(--white); }
     body.theme-parchment .game-desc,body.theme-water .game-desc,body.theme-earth .game-desc { color: var(--muted); }
     body.theme-parchment .game-tag,body.theme-water .game-tag,body.theme-earth .game-tag { color: var(--muted); border-color: var(--dim); }
-    /* Fix hardcoded-color elements */
-    body.theme-parchment .time-disp,body.theme-water .time-disp,body.theme-earth .time-disp { color: rgba(0,0,0,.45); }
-    body.theme-parchment .time-disp b,body.theme-water .time-disp b,body.theme-earth .time-disp b { color: var(--white); }
-    body.theme-parchment .info-synopsis,body.theme-water .info-synopsis,body.theme-earth .info-synopsis { color: var(--white); opacity:.85; }
-    body.theme-parchment .about-text p,body.theme-water .about-text p,body.theme-earth .about-text p { color: var(--white); opacity:.82; }
-    body.theme-parchment .about-fact-value,body.theme-water .about-fact-value,body.theme-earth .about-fact-value { color: var(--white); }
-    body.theme-parchment .info-meta,body.theme-water .info-meta,body.theme-earth .info-meta { color: var(--muted); }
-    body.theme-parchment .hero-main,body.theme-water .hero-main,body.theme-earth .hero-main { -webkit-text-fill-color: var(--white); color: var(--white); }
-    body.theme-parchment .hero-sub,body.theme-water .hero-sub,body.theme-earth .hero-sub { color: var(--muted); }
-    body.theme-parchment .section-divider-title,body.theme-water .section-divider-title,body.theme-earth .section-divider-title { color: var(--muted); }
-    body.theme-parchment .np-title,body.theme-water .np-title,body.theme-earth .np-title { color: var(--white); }
-    body.theme-parchment .np-ep,body.theme-parchment .np-label,body.theme-water .np-ep,body.theme-water .np-label,body.theme-earth .np-ep,body.theme-earth .np-label { color: var(--muted); }
-    body.theme-parchment #nextEpPanel,body.theme-water #nextEpPanel,body.theme-earth #nextEpPanel { background: rgba(255,255,255,.95); border-color: rgba(0,0,0,.12); }
-    body.theme-parchment .nep-eyebrow,body.theme-water .nep-eyebrow,body.theme-earth .nep-eyebrow { color: var(--muted); }
-    body.theme-parchment .nep-title,body.theme-water .nep-title,body.theme-earth .nep-title { color: var(--white); }
 </style>
 </head>
 <body>
@@ -346,7 +306,7 @@
     '#avatarGate .gate-sym{width:clamp(36px,5vw,56px);height:clamp(36px,5vw,56px);object-fit:contain;opacity:.8;}',
     '#avatarGate .gate-title{font-family:"Cinzel Decorative",Georgia,serif;font-size:clamp(1.4rem,4vw,2.4rem);',
     'letter-spacing:.12em;background:linear-gradient(135deg,#fff 0%,#d4e8ff 40%,#4db8ff 100%);',
-    '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;overflow:visible;padding:0.05em 0.1em 0.15em;line-height:1.15;}',
+    '-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;}',
     '#avatarGate .gate-sub{font-family:"Philosopher",Georgia,serif;font-style:italic;font-size:clamp(.75rem,1.8vw,1rem);',
     'color:#6b8aab;letter-spacing:.3em;text-transform:uppercase;text-align:center;}',
     '#avatarGate .gate-form{display:flex;flex-direction:column;align-items:center;gap:.9rem;width:min(340px,88vw);}',
@@ -396,7 +356,7 @@
       '<img class="gate-sym" src="images/earth.png" alt="Earth" style="animation:gatePulseEarth 2.8s ease-in-out infinite 1s">' +
       '<img class="gate-sym" src="images/fire.png"  alt="Fire"  style="animation:gatePulseFire  2.8s ease-in-out infinite 1.5s">' +
     '</div>' +
-    '<div class="gate-title">AvatarArchive</div>' +
+    '<div class="gate-title">Avatar Hub</div>' +
     '<div class="gate-sub">Members Only</div>' +
     '<div class="gate-divider"></div>' +
     '<div class="gate-form" id="gateForm">' +
@@ -537,7 +497,16 @@
           <span class="viewer-loading-text">Loading Book…</span>
         </div>
         <div class="viewer-controls" id="viewerControls" style="display:none;">
-
+          <div class="ctrl-group">
+            <button class="vcbtn" id="prevBookBtn">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
+              Prev Book
+            </button>
+            <button class="vcbtn" id="nextBookBtn">
+              Next Book
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6z"/></svg>
+            </button>
+          </div>
           <div class="ctrl-group">
             <button class="vcbtn" id="prevPageBtn">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 16.59L10.83 12l4.58-4.59L14 6l-6 6 6 6z"/></svg>
@@ -557,7 +526,10 @@
               <span class="zoom-val" id="zoomVal">100%</span>
               <button class="zoom-btn" id="zoomIn">+</button>
             </div>
-
+            <a class="vcbtn vcbtn-primary" id="openPdfBtn" href="#" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>
+              Open PDF
+            </a>
             <button class="vcbtn" id="fsBookBtn" title="Fullscreen">
               <svg id="fsIconOpen" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
               <svg id="fsIconClose" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
@@ -636,11 +608,11 @@
 
 <script>
 /* ─── PDF.js ─── */
-const PDFJS_CDN    = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
-const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const PDFJS_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs';
+const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs';
 
 /* ─── CONFIG ─── */
-const GH    = '';
+const GH    = 'https://jeffreyhamilton6399.github.io/AvatarArchive';
 const ASSETS= 'images';
 
 const SERIES = [
@@ -700,21 +672,13 @@ function updatePageUI() {
 let currentSeries  = 0;
 let currentBookIdx = null;
 
-/* ─── Load PDF.js lazily via <script> tag (UMD build — works everywhere) ─── */
+/* ─── Load PDF.js lazily ─── */
 async function ensurePDFJS() {
   if (pdfjsLib) return pdfjsLib;
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src = PDFJS_CDN;
-    s.onload = () => {
-      pdfjsLib = window.pdfjsLib;
-      if (!pdfjsLib) { reject(new Error('pdfjsLib not found on window')); return; }
-      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
-      resolve(pdfjsLib);
-    };
-    s.onerror = () => reject(new Error('Failed to load PDF.js script'));
-    document.head.appendChild(s);
-  });
+  const mod = await import(PDFJS_CDN);
+  pdfjsLib = mod;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+  return pdfjsLib;
 }
 
 /* ─── Refs ─── */
@@ -729,6 +693,7 @@ const viewerCtrl   = document.getElementById('viewerControls');
 const nrBar        = document.getElementById('nowReadingBar');
 const nrTitle      = document.getElementById('nrTitle');
 const nrSeries     = document.getElementById('nrSeries');
+const openPdfBtn   = document.getElementById('openPdfBtn');
 const loadingEl    = document.getElementById('viewerLoading');
 const prevPageBtn  = document.getElementById('prevPageBtn');
 const nextPageBtn  = document.getElementById('nextPageBtn');
@@ -841,7 +806,9 @@ async function loadBook(seriesIdx, bookIdx) {
   nrTitle.textContent  = b.title;
   nrSeries.textContent = s.label;
   nrBar.style.opacity  = '1';
-    placeholder.style.display = 'none';
+  openPdfBtn.href = url;
+
+  placeholder.style.display = 'none';
   pdfReader.style.display   = 'none';
   viewerCtrl.style.display  = 'none';
   document.getElementById('pdfSpread').querySelectorAll('.spread-page,.spread-spine').forEach(el => el.remove());
@@ -896,7 +863,7 @@ async function loadBook(seriesIdx, bookIdx) {
     await renderSpread(false);
 
   } catch(err) {
-    /* PDF load error — silently fail */
+    console.error('PDF load error:', err);
     loadingEl.classList.remove('active');
     loadingEl.innerHTML = `<span class="viewer-loading-text" style="color:#f97316">Failed to load PDF.<br>Try opening directly.</span>`;
     loadingEl.style.opacity = '1';
@@ -939,7 +906,18 @@ document.addEventListener('keydown', e => {
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); goPrevSpread(); }
 });
 
-/* Book nav handled via swipe/drag — prev/next book buttons removed */
+/* ─── Book nav buttons ─── */
+document.getElementById('prevBookBtn').addEventListener('click', () => {
+  if (currentBookIdx === null) return;
+  if (currentBookIdx > 0) { loadBook(currentSeries, currentBookIdx - 1); }
+  else if (currentSeries > 0) { const prev = currentSeries - 1; loadBook(prev, SERIES[prev].books.length - 1); }
+});
+document.getElementById('nextBookBtn').addEventListener('click', () => {
+  if (currentBookIdx === null) return;
+  const s = SERIES[currentSeries];
+  if (currentBookIdx < s.books.length - 1) { loadBook(currentSeries, currentBookIdx + 1); }
+  else if (currentSeries < SERIES.length - 1) { loadBook(currentSeries + 1, 0); }
+});
 
 /* ─── Intro overlay ─── */
 const overlay = document.getElementById('introOverlay');
@@ -951,7 +929,7 @@ function dismissOverlay(){
   setTimeout(() => { overlay.style.display = 'none'; document.body.classList.add('page-ready'); }, 650);
 }
 overlay.addEventListener('click', dismissOverlay, { once: true });
-setTimeout(dismissOverlay, 1400);
+setTimeout(dismissOverlay, 2800);
 
 /* ─── Series dropdown ─── */
 document.body.appendChild(dropdown);
@@ -1065,37 +1043,17 @@ document.body.addEventListener('animationend', function onReady(e) {
   if (!fsBtn || !viewerFrame) return;
 
   function updateFsIcons() {
-    const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement) || viewerFrame.classList.contains('fake-fs');
+    const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
     fsOpen.style.display  = inFs ? 'none' : '';
     fsClose.style.display = inFs ? ''     : 'none';
   }
 
   fsBtn.addEventListener('click', () => {
-    const inNativeFS = document.fullscreenElement || document.webkitFullscreenElement;
-    const inFakeFS   = viewerFrame.classList.contains('fake-fs');
-    if (inNativeFS) {
+    if (document.fullscreenElement || document.webkitFullscreenElement) {
       (document.exitFullscreen || document.webkitExitFullscreen).call(document);
-    } else if (inFakeFS) {
-      viewerFrame.classList.remove('fake-fs');
-      document.body.style.overflow = '';
-      fsIconOpen.style.display = '';
-      fsIconClose.style.display = 'none';
-    } else if (viewerFrame.requestFullscreen) {
-      viewerFrame.requestFullscreen().catch(() => {
-        /* Native FS failed (iOS) — fall back to fake fullscreen */
-        viewerFrame.classList.add('fake-fs');
-        document.body.style.overflow = 'hidden';
-        fsIconOpen.style.display = 'none';
-        fsIconClose.style.display = '';
-      });
-    } else if (viewerFrame.webkitRequestFullscreen) {
-      viewerFrame.webkitRequestFullscreen();
     } else {
-      /* iOS Safari — use fake fullscreen */
-      viewerFrame.classList.add('fake-fs');
-      document.body.style.overflow = 'hidden';
-      fsIconOpen.style.display = 'none';
-      fsIconClose.style.display = '';
+      if (viewerFrame.requestFullscreen) viewerFrame.requestFullscreen().catch(()=>{});
+      else if (viewerFrame.webkitRequestFullscreen) viewerFrame.webkitRequestFullscreen();
     }
   });
 
@@ -1178,76 +1136,6 @@ document.body.addEventListener('animationend', function onReady(e) {
       hint.classList.add('show');
       setTimeout(() => hint.classList.remove('show'), 2800);
     }, 800);
-  }
-})();
-</script>
-
-<script>
-/* ── Background ambient — resumes seamlessly from hub ── */
-(function () {
-  if (localStorage.getItem('avatarhub_ambient_off') === '1') return;
-  if (sessionStorage.getItem('avatarhub_ambient_active') !== '1') return;
-
-  let _raw     = null;
-  let _ctx     = null;
-  let _started = false;
-
-  fetch('audio/ambient.MP3')
-    .then(r => r.ok ? r.arrayBuffer() : null)
-    .then(b => { _raw = b; })
-    .catch(() => {});
-
-  setTimeout(tryStart, 80);
-  armGesture();
-
-  function armGesture() {
-    ['click','touchstart','keydown'].forEach(ev =>
-      document.addEventListener(ev, function h() {
-        document.removeEventListener(ev, h);
-        tryStart();
-      }, { passive: true })
-    );
-  }
-
-  async function tryStart() {
-    if (_started) return;
-    if (!_ctx) {
-      try { _ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-      catch (e) { return; }
-    }
-    try { await _ctx.resume(); } catch (e) {}
-    if (_ctx.state !== 'running') { armGesture(); return; }
-
-    const raw = _raw || await fetch('audio/ambient.MP3')
-      .then(r => r.ok ? r.arrayBuffer() : null).catch(() => null);
-    if (!raw) return;
-
-    let decoded;
-    try { decoded = await _ctx.decodeAudioData(raw.slice(0)); }
-    catch (e) { return; }
-    if (_started) return;
-    _started = true;
-
-    // Resume at the exact position in the loop the hub was at
-    const t0 = parseInt(sessionStorage.getItem('avatarhub_ambient_t0') || '0');
-    const offset = (t0 && decoded.duration > 0)
-      ? ((Date.now() - t0) / 1000) % decoded.duration
-      : 0;
-
-    const src  = _ctx.createBufferSource();
-    const gain = _ctx.createGain();
-    src.buffer = decoded;
-    src.loop   = true;
-    gain.gain.value = 0;
-    src.connect(gain).connect(_ctx.destination);
-    src.start(0, offset);
-
-    let v = 0;
-    const t = setInterval(() => {
-      v = Math.min(0.55, v + 0.015);
-      gain.gain.value = v;
-      if (v >= 0.55) clearInterval(t);
-    }, 60);
   }
 })();
 </script>
