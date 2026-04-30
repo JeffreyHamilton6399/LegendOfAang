@@ -448,7 +448,6 @@
       padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       background: #04070d;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem;
-      cursor: pointer;
     }
     #mapSplash.fade-out { animation: overlayOut .8s ease forwards; pointer-events: none; }
     .map-title {
@@ -474,12 +473,6 @@
       transition: opacity .9s ease .15s, transform .9s cubic-bezier(.22,1,.36,1) .15s;
     }
     #mapSplash.map-in #mapSvg { opacity: 1; transform: scale(1); }
-    .map-hint {
-      font-family: 'Cinzel', serif; font-size: clamp(.38rem,.9vw,.48rem);
-      letter-spacing: .35em; text-transform: uppercase; color: rgba(240,244,255,.45);
-      opacity: 0; transition: opacity .6s ease 1.4s;
-    }
-    #mapSplash.map-in .map-hint { opacity: 1; }
 
     /* ── Search ── */
     .search-bar-wrap {
@@ -740,7 +733,6 @@
   <p class="map-title">The Avatar World</p>
   <img id="mapSvg" src="images/worldmap.png" alt="Avatar World Map">
   <p class="map-sub">The Four Nations</p>
-  <p class="map-hint">Tap anywhere to enter</p>
 </div>
 
 
@@ -1090,11 +1082,9 @@
   let introStarted  = false;
   let nudgeTimer    = null;
   let mapDone       = false;
-  let mapShowTs     = 0;
   let autoMapTimer  = null;
 
-  const MAP_MIN  = 5000;   // minimum ms the map stays visible before tap dismisses
-  const MAP_AUTO = 10000;  // auto-dismiss if user never taps
+  const MAP_MIN  = 5000;   // ms the map stays visible (cinematic pause)
 
   // Pre-fetch raw bytes immediately — no AudioContext needed yet
   let _introRaw   = null;
@@ -1316,18 +1306,9 @@
     setTimeout(() => { mapSplash.style.display = 'none'; document.body.classList.add('page-ready'); }, 800);
   }
 
+  // Map is purely cinematic — show for MAP_MIN then auto-dismiss, no tap needed
   function armMap() {
-    autoMapTimer = setTimeout(() => { if (!mapDone) dismissMap(); }, MAP_AUTO);
-    mapSplash.setAttribute('tabindex', '0');
-    mapSplash.addEventListener('click', async () => {
-      if (mapDone) return;
-      if (!introStarted && !savedMuted) { await ensureCtx(); await startAudio(); }
-      const wait = Math.max(0, MAP_MIN - (Date.now() - mapShowTs));
-      setTimeout(dismissMap, wait);
-    }, { once: true });
-    mapSplash.addEventListener('keydown', e => {
-      if ((e.code === 'Space' || e.code === 'Enter') && !mapDone) dismissMap();
-    });
+    autoMapTimer = setTimeout(() => { if (!mapDone) dismissMap(); }, MAP_MIN);
   }
 
   // ── Orchestration ────────────────────────────────────────────────────────
@@ -1336,16 +1317,8 @@
       // Already seen intro — go straight to content, no loader, no map
       document.body.classList.add('page-ready');
       if (ambientWasActive) startAudio();
-    } else if (ambientWasActive) {
-      // Returning from sub-page mid-session, intro not yet completed: quick map
-      showMap();
-      startAudio();
-      autoMapTimer = setTimeout(() => { if (!mapDone) dismissMap(); }, 2000);
-      mapSplash.addEventListener('click', () => { clearTimeout(autoMapTimer); dismissMap(); }, { once: true });
-      mapSplash.setAttribute('tabindex','0');
     } else {
-      // Fresh first visit: loader → audio → map
-      loader.addEventListener('click', () => ensureCtx(), { once: true });
+      // First visit or returning mid-session without intro: loader → map → content
       runLoader(async () => {
         const ok = await ensureCtx();
         if (ok) { await startAudio(); } else { showSoundNudge(); }
