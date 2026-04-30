@@ -49,11 +49,6 @@
     #introOverlay.fade-out{animation:overlayOut .65s ease forwards;pointer-events:none;}
     .intro-tagline{font-family:'Philosopher',serif;font-size:clamp(.6rem,1.6vw,.8rem);font-style:italic;letter-spacing:.5em;text-transform:uppercase;color:rgba(240,244,255,.8);opacity:0;transition:opacity .6s ease .15s;}
     #introOverlay.symbols-in .intro-tagline{opacity:1;}
-    .intro-tap-hint{font-family:'Cinzel',serif;font-size:clamp(.5rem,1.2vw,.65rem);letter-spacing:.4em;text-transform:uppercase;color:rgba(240,244,255,.5);opacity:0;transition:opacity .5s ease;margin-top:.5rem;}
-    #introOverlay.ready .intro-tap-hint{opacity:1;animation:tapPulse 2s ease-in-out infinite;}
-    .intro-loading{font-family:'Cinzel',serif;font-size:clamp(.45rem,1vw,.58rem);letter-spacing:.35em;text-transform:uppercase;color:rgba(240,244,255,.35);opacity:1;transition:opacity .4s ease;}
-    #introOverlay.ready .intro-loading{opacity:0;pointer-events:none;}
-    @keyframes tapPulse{0%,100%{opacity:.5}50%{opacity:1;}}
     .symbols-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(2rem,5vw,5rem);align-items:center;justify-items:center;}
     @media(max-width:600px){.symbols-grid{grid-template-columns:repeat(2,1fr);gap:2rem}}
     .sym-item{display:flex;flex-direction:column;align-items:center;gap:.9rem;opacity:0;transform:scale(.78);transition:opacity .55s ease,transform .55s cubic-bezier(.22,1,.36,1);}
@@ -559,8 +554,6 @@
 
 <div id="introOverlay" title="Click to enter">
   <p class="intro-tagline">Four elements. One destiny.</p>
-  <p class="intro-loading">Loading&hellip;</p>
-  <p class="intro-tap-hint">Tap anywhere to enter</p>
   <div class="symbols-grid">
     <div class="sym-item water"><img src="images/water.png" alt="Water" class="sym-img"><span class="sym-label">Water</span></div>
     <div class="sym-item earth"><img src="images/earth.png" alt="Earth" class="sym-img"><span class="sym-label">Earth</span></div>
@@ -866,15 +859,11 @@ function getNext(b,n){ const bd=BOOKS[b-1]; if(n<bd.episodes.length) return{book
 let currentEp=null, autoFrame=null, autoStart=null;
 
 /* Intro overlay */
-const overlay=document.getElementById('introOverlay'); let dismissed=false, overlayReady=false;
-if(localStorage.getItem('aa_korra_intro_seen')==='1'){
-  dismissed=true; overlay.style.display='none'; document.body.classList.add('page-ready');
-} else {
-  requestAnimationFrame(()=>setTimeout(()=>overlay.classList.add('symbols-in'),80));
-  function dismissOverlay(){ if(!overlayReady||dismissed)return;dismissed=true;localStorage.setItem('aa_korra_intro_seen','1');document.body.classList.add('page-ready');overlay.classList.add('fade-out');setTimeout(()=>{overlay.style.display='none';},650); }
-  overlay.addEventListener('click',dismissOverlay);
-  window.addEventListener('load',()=>{ overlayReady=true; overlay.classList.add('ready'); });
-}
+const overlay=document.getElementById('introOverlay'); let dismissed=false;
+requestAnimationFrame(()=>setTimeout(()=>overlay.classList.add('symbols-in'),80));
+function dismissOverlay(){ if(dismissed)return;dismissed=true;overlay.classList.add('fade-out');setTimeout(()=>{overlay.style.display='none';document.body.classList.add('page-ready');},650); }
+overlay.addEventListener('click',dismissOverlay,{once:true});
+setTimeout(dismissOverlay,2800);
 
 /* Player refs */
 const vid=document.getElementById('mainVideo'),shell=document.getElementById('playerShell'),bigPlay=document.getElementById('bigPlay'),clickArea=document.getElementById('clickArea'),playBtn=document.getElementById('playBtn'),icPlay=document.getElementById('icPlay'),icPause=document.getElementById('icPause'),curEl=document.getElementById('curTime'),durEl=document.getElementById('durTime'),progFill=document.getElementById('progFill'),progBuf=document.getElementById('progBuf'),progThumb=document.getElementById('progThumb'),prog=document.getElementById('prog'),volBtn=document.getElementById('volBtn'),volSlider=document.getElementById('volSlider'),icVolOn=document.getElementById('icVolOn'),icVolOff=document.getElementById('icVolOff'),playerFrame=document.getElementById('playerFrame'),skipBtn=document.getElementById('skipIntroBtn'),nextPanel=document.getElementById('nextEpPanel'),nepTitle=document.getElementById('nepTitle'),nepBtn=document.getElementById('nepBtn'),nepProgress=document.getElementById('nepProgress'),nepSkip=document.getElementById('nepSkip'),bufSpin=document.getElementById('bufferSpinner'),ccBtn=document.getElementById('ccBtn'),captionBox=document.getElementById('captionBox');
