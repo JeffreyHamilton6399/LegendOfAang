@@ -322,6 +322,62 @@
       padding-bottom: clamp(4rem,8vh,7rem);
       opacity: 0;
     }
+
+    /* ── Continue Watching row ── */
+    .continue-watching-section {
+      grid-column: 1 / -1;
+      margin-bottom: .5rem;
+    }
+    .cw-header {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: .9rem;
+    }
+    .cw-label {
+      font-family: 'Cinzel', serif; font-size: .5rem; letter-spacing: .3em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .cw-cards {
+      display: flex; gap: 1rem; overflow-x: auto; padding-bottom: .5rem;
+      scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.1) transparent;
+    }
+    .cw-cards::-webkit-scrollbar { height: 4px; }
+    .cw-cards::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 4px; }
+    .cw-card {
+      flex-shrink: 0; width: 220px; background: rgba(10,17,28,.9);
+      border: 1px solid rgba(255,255,255,.08); border-radius: 12px;
+      overflow: hidden; text-decoration: none; color: var(--white);
+      transition: transform .2s, border-color .2s, box-shadow .2s;
+      position: relative;
+    }
+    .cw-card:hover { transform: translateY(-4px); border-color: rgba(201,168,76,.35); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+    .cw-thumb {
+      width: 100%; aspect-ratio: 16/9; object-fit: cover;
+      background: rgba(10,17,28,.6); display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .cw-thumb-bg {
+      position: absolute; inset: 0; background-size: cover; background-position: center;
+      filter: brightness(.55); transition: filter .25s;
+    }
+    .cw-card:hover .cw-thumb-bg { filter: brightness(.7); }
+    .cw-play-icon {
+      position: relative; z-index: 2; width: 32px; height: 32px;
+      background: rgba(255,255,255,.15); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,.2);
+      transition: background .2s;
+    }
+    .cw-card:hover .cw-play-icon { background: rgba(201,168,76,.35); border-color: rgba(201,168,76,.6); }
+    .cw-play-icon svg { width: 14px; height: 14px; fill: white; margin-left: 2px; }
+    .cw-progress-bar {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: rgba(255,255,255,.12);
+    }
+    .cw-progress-fill { height: 100%; background: var(--cw-accent, var(--gold)); }
+    .cw-info { padding: .65rem .8rem .75rem; }
+    .cw-show { font-family: 'Cinzel', serif; font-size: .38rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: .2rem; }
+    .cw-ep-title { font-family: 'Philosopher', serif; font-size: .82rem; color: var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: .2rem; }
+    .cw-timestamp { font-family: 'Cinzel', serif; font-size: .38rem; letter-spacing: .1em; color: var(--muted); }
+    @media(max-width:640px){ .cw-card { width: 170px; } }
     body.page-ready .cards-section { animation: slideUp 1s cubic-bezier(.22,1,.36,1) .28s both; }
     @media(max-width:1100px){ .cards-section{ grid-template-columns:repeat(2,1fr); } }
     @media(max-width:640px){
@@ -757,10 +813,7 @@
     </div>
   </div>
 
-  <!-- Navigation Cards -->
-  <div class="cards-section">
-
-    <!-- ATLA -->
+  <!-- Navigation Cards -->\n  <div class=\"cards-section\">\n\n  <!-- Continue Watching -->\n  <div class=\"continue-watching-section\" id=\"continueWatchingSection\" style=\"display:none\">\n    <div class=\"cw-header\">\n      <span class=\"cw-label\">Continue Watching</span>\n    </div>\n    <div class=\"cw-cards\" id=\"cwCards\"></div>\n  </div>\n\n    <!-- ATLA -->
     <a href="atla.html" class="hub-card atla">
       <div class="card-poster">
         <div class="card-poster-bg" style="background-image:url('images/atlabg.png')"></div>
@@ -1532,10 +1585,68 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
   [[1,20],[2,20],[3,21]].forEach(([b,n])=>{ for(let i=1;i<=n;i++) atlaEps.push([b,i]); });
   [[1,12],[2,14],[3,13],[4,13]].forEach(([b,n])=>{ for(let i=1;i<=n;i++) korraEps.push([b,i]); });
 
+  const ATLA_TITLES = {
+    '1': ['The Boy in the Iceberg','The Avatar Returns','The Southern Air Temple','The Warriors of Kyoshi','The King of Omashu','Imprisoned','The Spirit World','Avatar Roku','The Waterbending Scroll','Jet','The Great Divide','The Storm','The Blue Spirit','The Fortuneteller','Bato of the Water Tribe','The Deserter','The Northern Air Temple','The Waterbending Master','The Siege of the North, Part 1','The Siege of the North, Part 2'],
+    '2': ['The Avatar State','The Cave of Two Lovers','Return to Omashu','The Swamp','Avatar Day','The Blind Bandit','Zuko Alone','The Chase','Bitter Work','The Library','The Desert',"The Serpent's Pass",'The Drill','City of Walls and Secrets','The Tales of Ba Sing Se',"Appa's Lost Days",'Lake Laogai','The Earth King','The Guru','The Crossroads of Destiny'],
+    '3': ['The Awakening','The Headband','The Painted Lady',"Sokka's Master",'The Beach','The Avatar and the Firelord','The Runaway','The Puppetmaster','Nightmares and Daydreams','The Day of Black Sun, Part 1','The Day of Black Sun, Part 2','The Western Air Temple','The Firebending Masters','The Boiling Rock, Part 1','The Boiling Rock, Part 2','The Southern Raiders','The Ember Island Players',"Sozin's Comet, Part 1",'Sozin\'s Comet, Part 2',"Sozin's Comet, Part 3","Sozin's Comet, Part 4"]
+  };
+  const KORRA_TITLES = {
+    '1': ['Welcome to Republic City','A Leaf in the Wind','The Revelation','The Voice in the Night','The Spirit of Competition','And the Winner Is....','The Aftermath','When Extremes Meet','Out of the Past','Turning the Tides','Skeletons in the Closet','Endgame'],
+    '2': ['Rebel Spirit','The Southern Lights','Civil Wars Pt. 1','Civil Wars Pt. 2','Peacekeepers','The Sting','Beginnings Part 1','Beginnings Part 2','The Guide','A New Spiritual Age','Night of a Thousand Stars','Harmonic Convergence','Darkness Falls','Light in the Dark'],
+    '3': ['A Breath of Fresh Air','Rebirth','The Earth Queen',"In Harm's Way",'The Metal Clan','Old Wounds','Original Airbenders','The Terror Within','The Stakeout','Long Live the Queen','The Ultimatum','Enter the Void','Venom of the Red Lotus'],
+    '4': ['After All These Years','Korra Alone','The Coronation','The Calling','Enemy at the Gates','The Battle of Zaofu','Reunion','Remembrances','Beyond the Wilds','Operation Beifong',"Kuvira's Gambit",'Day of the Colossus','The Last Stand']
+  };
+
+  function fmtTime(s){ s=Math.floor(s); const m=Math.floor(s/60); return m+'m '+(s%60)+'s'; }
+
   function getSeriesProgress(prefix, epList){
     let w=0;
     for(const [b,n] of epList){ if(parseFloat(localStorage.getItem(`${prefix}_b${b}_e${n}`)||0)>5) w++; }
     return epList.length>0 ? w/epList.length : 0;
+  }
+
+  // Build continue-watching cards: find episodes in-progress (started but not watched)
+  function getInProgress(prefix, epList, titles, page, accent, bgImage){
+    const results = [];
+    for(const [b,n] of epList){
+      const t = parseFloat(localStorage.getItem(`${prefix}_b${b}_e${n}`)||0);
+      const watched = localStorage.getItem(`${prefix}_watched_b${b}_e${b}`) === '1';
+      if(t > 10 && !watched){
+        const title = (titles[String(b)]||[])[n-1] || `Episode ${n}`;
+        results.push({b, n, t, title, page, accent, bgImage});
+      }
+    }
+    // Sort by most recently watched (highest timestamp as proxy), take last 8
+    return results.sort((a,b)=>b.t-a.t).slice(0,8);
+  }
+
+  const atlaItems  = getInProgress('atlaepisodes',  atlaEps,  ATLA_TITLES,  'atla.html',  '#4db8ff', 'images/atlabg.png');
+  const korraItems = getInProgress('koraepisodes', korraEps, KORRA_TITLES, 'kora.html', '#6abf69', 'images/korabg.png');
+  const allItems   = [...atlaItems, ...korraItems];
+
+  const cwSection = document.getElementById('continueWatchingSection');
+  const cwCards   = document.getElementById('cwCards');
+
+  if(allItems.length > 0 && cwSection && cwCards){
+    cwSection.style.display = 'block';
+    allItems.forEach(item => {
+      const card = document.createElement('a');
+      card.href = `${item.page}?b=${item.b}&e=${item.n}`;
+      card.className = 'cw-card';
+      card.style.setProperty('--cw-accent', item.accent);
+      card.innerHTML = `
+        <div class="cw-thumb">
+          <div class="cw-thumb-bg" style="background-image:url('${item.bgImage}')"></div>
+          <div class="cw-play-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          <div class="cw-progress-bar"><div class="cw-progress-fill" style="width:${Math.min(99,Math.round(item.t/3600*100))}%"></div></div>
+        </div>
+        <div class="cw-info">
+          <div class="cw-show">${item.page==='atla.html'?'ATLA':'Korra'} · Book ${item.b}</div>
+          <div class="cw-ep-title">${item.title}</div>
+          <div class="cw-timestamp">▶ Resume at ${fmtTime(item.t)}</div>
+        </div>`;
+      cwCards.appendChild(card);
+    });
   }
 
   const atlaFill  = document.getElementById('atlaProgFill');
