@@ -293,13 +293,10 @@
       background: linear-gradient(135deg,#fff 0%,#d4e8ff 40%,#4db8ff 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       margin-bottom: .5rem;
-      padding: 0.1em 0.4em;
-      display: block;
-      text-align: center;
-      width: 100%;
-      white-space: nowrap;
+      padding: 0.12em 0.5em 0.18em;
+      display: inline-block;
+      max-width: 100%;
       overflow: visible;
-      box-sizing: border-box;
     }
     .hero-sub {
       font-family: 'Philosopher', serif; font-style: italic;
@@ -394,8 +391,7 @@
       .hero-main {
         font-size: clamp(1.3rem, 7.5vw, 2.4rem);
         letter-spacing: .03em;
-        overflow: visible;
-        padding: 0 .25rem;
+        padding: 0.1em 0.4em 0.15em;
       }
       .hero-sub { font-size: .88rem; }
     }
@@ -1265,10 +1261,18 @@
 
   // ── Ambient toggle ───────────────────────────────────────────────────────
   ambientBtn.addEventListener('click', async () => {
+    if (ambientActive) {
+      // Turn off: immediate — no async needed
+      ambientFadeOut();
+      return;
+    }
+    // Turn on: show active state instantly so toggle feels immediate
+    ambientBtn.classList.add('active');
     const ok = await ensureCtx();
-    if (!ok) return;
-    if (ambientActive) { ambientFadeOut(); }
-    else { await decodeBuffers(); if (_ambientDecoded) ambientFadeIn(); else showSoundNudge(); }
+    if (!ok) { ambientBtn.classList.remove('active'); showSoundNudge(); return; }
+    await decodeBuffers();
+    if (_ambientDecoded) { ambientFadeIn(); }
+    else { ambientBtn.classList.remove('active'); showSoundNudge(); }
   });
 
   soundNudge && soundNudge.addEventListener('click', async () => {
@@ -1633,7 +1637,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
 
   const atlaItems  = getInProgress('atlaepisodes',  atlaEps,  ATLA_TITLES,  'atla.html',  '#4db8ff', 'images/atlabg.png');
   const korraItems = getInProgress('koraepisodes', korraEps, KORRA_TITLES, 'kora.html', '#6abf69', 'images/korabg.png');
-  const allItems   = [...atlaItems, ...korraItems];
+  const allItems   = [...atlaItems, ...korraItems].sort((a,b)=>b.t-a.t).slice(0,1);
 
   const cwSection = document.getElementById('continueWatchingSection');
   const cwCards   = document.getElementById('cwCards');
