@@ -17,7 +17,8 @@
 (function(){
   var PASS = 'AvatarAang';
   var KEY  = 'avatarhub_auth';
-  if (localStorage.getItem(KEY) === '1') return; // already authed this session
+  if (localStorage.getItem(KEY) === '1') return; // already authed
+  if (document.getElementById('avatarGate')) return; // already injected by another script
 
   /* Inject gate CSS */
   var style = document.createElement('style');
@@ -106,14 +107,16 @@
   var eyeShow= document.getElementById('eyeShow');
   var eyeHide= document.getElementById('eyeHide');
 
+  var errTimer;
   function showErr(msg){
+    clearTimeout(errTimer);
     err.textContent = msg || 'Incorrect password — try again';
     err.classList.add('show');
     form.classList.remove('shake');
     void form.offsetWidth; // reflow to restart animation
     form.classList.add('shake');
     input.select();
-    setTimeout(function(){ err.classList.remove('show'); }, 2800);
+    errTimer = setTimeout(function(){ err.classList.remove('show'); }, 2800);
   }
 
   function tryEnter(){
@@ -173,12 +176,15 @@
   armGesture();
 
   function armGesture() {
-    ['click','touchstart','keydown'].forEach(ev =>
-      document.addEventListener(ev, function h() {
+    var h = function() {
+      ['click', 'touchstart', 'keydown'].forEach(function(ev) {
         document.removeEventListener(ev, h);
-        tryStart();
-      }, { passive: true })
-    );
+      });
+      tryStart();
+    };
+    ['click', 'touchstart', 'keydown'].forEach(function(ev) {
+      document.addEventListener(ev, h, { passive: true });
+    });
   }
 
   async function tryStart() {

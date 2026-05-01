@@ -1089,9 +1089,18 @@ a:active, button:active, [role="button"]:active,
   </div>
 </div>
 
-<!-- Feedback Modal -->
 <div id="feedbackModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(4,7,13,.75);backdrop-filter:blur(12px);align-items:center;justify-content:center;">
-  <div style="background:rgba(8,14,26,.97);border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:2rem 1.8rem;max-width:420px;width:90%;display:flex;flex-direction:column;gap:1rem;box-shadow:0 16px 60px rgba(0,0,0,.7);animation:panelIn .2s cubic-bezier(.22,1,.36,1) both;">
+  <div id="fbBox" style="position:relative;overflow:hidden;background:rgba(8,14,26,.97);border:1px solid rgba(201,168,76,.25);border-radius:20px;padding:2rem 1.8rem;max-width:420px;width:90%;display:flex;flex-direction:column;gap:1rem;box-shadow:0 16px 60px rgba(0,0,0,.7);animation:panelIn .2s cubic-bezier(.22,1,.36,1) both;">
+
+    <!-- Success overlay — shown after send -->
+    <div id="fbSuccess" style="display:none;position:absolute;inset:0;border-radius:20px;background:rgba(8,14,26,.98);flex-direction:column;align-items:center;justify-content:center;gap:1.1rem;text-align:center;padding:2rem;transition:opacity .3s;z-index:2;">
+      <div style="width:52px;height:52px;border-radius:50%;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.35);display:flex;align-items:center;justify-content:center;animation:fbCheckIn .4s cubic-bezier(.22,1,.36,1) both;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold,#c9a84c)" stroke-width="2.5" style="width:24px;height:24px"><polyline points="4 12 9 17 20 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold,#c9a84c);">Feedback Sent!</div>
+      <p style="font-family:'Philosopher',serif;font-size:.82rem;color:var(--muted,#6b8aab);line-height:1.6;">Thanks for helping improve AvatarArchive.</p>
+    </div>
+
     <div style="font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);">Give Feedback</div>
     <p style="font-size:.6rem;color:var(--muted);line-height:1.6;">Have an idea to improve AvatarArchive? Found a bug? Let us know.</p>
     <select id="fbType" style="background:#0d1826;border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:.6em .8em;color:#f0f4ff;font-family:'Philosopher',serif;font-size:.65rem;cursor:pointer;outline:none;-webkit-appearance:auto;">
@@ -1107,6 +1116,9 @@ a:active, button:active, [role="button"]:active,
     </div>
   </div>
 </div>
+<style>
+@keyframes fbCheckIn { from{opacity:0;transform:scale(.5)} to{opacity:1;transform:scale(1)} }
+</style>
 
 <!-- Shown when browser blocks autoplay -->
 <div id="soundNudge" title="Click to enable ambient sound">
@@ -1674,7 +1686,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
     const results = [];
     for(const [b,n] of epList){
       const t = parseFloat(localStorage.getItem(`${prefix}_b${b}_e${n}`)||0);
-      const watched = localStorage.getItem(`${prefix}_watched_b${b}_e${b}`) === '1';
+      const watched = localStorage.getItem(`${prefix}_watched_b${b}_e${n}`) === '1';
       if(t > 10 && !watched){
         const title = (titles[String(b)]||[])[n-1] || `Episode ${n}`;
         results.push({b, n, t, title, page, accent, bgImage});
@@ -1912,10 +1924,24 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
   const fbSend   = document.getElementById('fbSend');
   const fbText   = document.getElementById('fbText');
   const fbType   = document.getElementById('fbType');
+  const fbSuccess = document.getElementById('fbSuccess');
   if(!fbBtn||!fbModal) return;
 
-  function openFb(){ fbModal.style.display='flex'; fbText.value=''; fbSend.textContent='Send'; fbSend.disabled=false; }
+  function openFb(){
+    fbModal.style.display='flex';
+    fbText.value='';
+    fbSend.textContent='Send';
+    fbSend.disabled=false;
+    fbCancel.disabled=false;
+    // Hide success overlay in case it was shown last time
+    if(fbSuccess) { fbSuccess.style.display='none'; }
+  }
   function closeFb(){ fbModal.style.display='none'; }
+
+  function showModalSuccess(){
+    if(!fbSuccess) return;
+    fbSuccess.style.display='flex';
+  }
 
   function showToast(msg, isError){
     const t = Object.assign(document.createElement('div'),{
@@ -1945,9 +1971,10 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
     all.push({ type: fbType.value, msg, ts: new Date().toISOString() });
     localStorage.setItem('aa_feedback', JSON.stringify(all));
 
-    // Loading state
+    // Disable both buttons while in-flight
     fbSend.textContent = 'Sending…';
     fbSend.disabled = true;
+    fbCancel.disabled = true;
 
     // Send via EmailJS (free tier — 200 emails/month, no server needed)
     // SETUP: go to https://www.emailjs.com → create account → 
@@ -1956,8 +1983,8 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
     //      → copy Template ID below
     //   3. Go to Account → copy Public Key below
     const EMAILJS_PUBLIC_KEY  = '2gn3Wt4jXxkkwP8iX';   // ← replace
-    const EMAILJS_SERVICE_ID  = 'service_4y4r3d6';   // ← replace  
-    const EMAILJS_TEMPLATE_ID = 'template_bx0lxum';  // ← replace
+    const EMAILJS_SERVICE_ID  = 'service_4y4r3d6';      // ← replace
+    const EMAILJS_TEMPLATE_ID = 'template_bx0lxum';     // ← replace
 
     try {
       // Lazy-load EmailJS SDK only when needed
@@ -1977,12 +2004,17 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
         sent_at:   new Date().toLocaleString()
       });
 
-      closeFb();
-      showToast('Thanks for your feedback!', false);
+      // Show in-modal success state, then close after a beat
+      showModalSuccess();
+      setTimeout(closeFb, 2400);
+
     } catch(err) {
       console.error('EmailJS error:', err);
-      closeFb();
-      showToast('Saved locally — check console to set up EmailJS', true);
+      // Show error state in the send button, re-enable cancel so user can exit
+      fbSend.textContent = 'Error — retry?';
+      fbSend.disabled = false;
+      fbCancel.disabled = false;
+      showToast('Saved locally — check console to configure EmailJS', true);
     }
   });
 })();
