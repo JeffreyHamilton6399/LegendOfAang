@@ -1123,9 +1123,9 @@ function setPill(b) {
 
 /* Render episode grid for a book */
 function epUrl(b,n){
-  if(b===1&&n===0) return `${GH}/${BOOKS[0].tag}/S1E0.mkv`;
-  if(b===2&&(n===12||n===13)) return `${GH}/${BOOKS[b-1].tag}/S2E12E13.mkv`;
-  return `${GH}/${BOOKS[b-1].tag}/S${b}E${n}.mkv`;
+  if(b===1&&n===0) return `${GH}/${BOOKS[0].tag}/S1E0.mp4`;
+  if(b===2&&(n===12||n===13)) return `${GH}/${BOOKS[b-1].tag}/S2E12E13.mp4`;
+  return `${GH}/${BOOKS[b-1].tag}/S${b}E${n}.mp4`;
 }
 function renderEpisodes(b) {
   const bData = BOOKS[b - 1];
