@@ -1845,19 +1845,34 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
   // HOVER_SEL ancestor for both target and relatedTarget so moving between
   // child nodes inside the same card doesn't re-trigger the sound.
   let _lastHovered = null;
+  function _outerMatch(el) {
+    // Walk up to find the outermost ancestor that also matches HOVER_SEL
+    // so moving between children of the same card doesn't re-fire
+    let outer = el, p = el.parentElement;
+    while (p && p !== document.body) {
+      if (p.matches && p.matches(HOVER_SEL)) outer = p;
+      p = p.parentElement;
+    }
+    return outer;
+  }
   document.addEventListener('mouseover', function (e) {
     const el = e.target.closest(HOVER_SEL);
     if (!el) return;
-    const from = e.relatedTarget ? e.relatedTarget.closest(HOVER_SEL) : null;
-    if (el === from || el === _lastHovered) return; // still inside same element
-    _lastHovered = el;
+    const outer = _outerMatch(el);
+    const fromEl = e.relatedTarget ? e.relatedTarget.closest(HOVER_SEL) : null;
+    const fromOuter = fromEl ? _outerMatch(fromEl) : null;
+    if (outer === fromOuter || outer === _lastHovered) return;
+    _lastHovered = outer;
     playHoverSfx();
   }, { passive: true });
   document.addEventListener('mouseout', function (e) {
     const el = e.target.closest(HOVER_SEL);
-    if (el && el === _lastHovered) {
+    if (!el) return;
+    const outer = _outerMatch(el);
+    if (outer === _lastHovered) {
       const to = e.relatedTarget ? e.relatedTarget.closest(HOVER_SEL) : null;
-      if (to !== el) _lastHovered = null;
+      const toOuter = to ? _outerMatch(to) : null;
+      if (toOuter !== outer) _lastHovered = null;
     }
   }, { passive: true });
 
