@@ -623,7 +623,30 @@
     }
     .install-close:hover { color: var(--white); border-color: rgba(255,255,255,.3); }
 
-  </style>
+  
+/* ── Press animation ── */
+a, button, [role="button"],
+.hub-card, .card-cta, .ep-card, .ep-thumb, .book-tab, .season-tab,
+.pill-btn, .pill-tab, .theme-opt, .sp-ambient-row, .sp-install-row,
+.star-btn, .ctrl-btn, .card-poster, .merch-card, .comic-btn,
+.nav-btn, .vcbtn, .back-link, [data-ep], [data-book],
+.season-pill, .book-card, .game-card, .comic-card, .sp-section button {
+  -webkit-tap-highlight-color: transparent;
+}
+a:active, button:active, [role="button"]:active,
+.hub-card:active, .card-cta:active, .ep-card:active, .ep-thumb:active,
+.book-tab:active, .season-tab:active, .pill-btn:active, .pill-tab:active,
+.theme-opt:active, .sp-ambient-row:active, .sp-install-row:active,
+.star-btn:active, .ctrl-btn:active, .card-poster:active, .merch-card:active,
+.comic-btn:active, .nav-btn:active, .vcbtn:active, .back-link:active,
+[data-ep]:active, [data-book]:active, .season-pill:active,
+.book-card:active, .game-card:active, .comic-card:active,
+.sp-section button:active {
+  transform: scale(0.955) !important;
+  opacity: .83 !important;
+  transition: transform .09s cubic-bezier(.3,0,.5,1), opacity .09s ease !important;
+}
+</style>
 </head>
 <body>
 <script>
