@@ -276,7 +276,18 @@
   body.theme-parchment .dp-desc,body.theme-water .dp-desc,body.theme-earth .dp-desc { color:var(--muted); }
   body.theme-parchment .dp-title,body.theme-water .dp-title,body.theme-earth .dp-title { color:var(--white); }
 
-  @keyframes tl-in { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
+  /* Press feedback — all tappable elements */
+  .era-hd, .ev, .dp-handle, .dp-close, .back-link,
+  #settingsBtn, .theme-opt, .sp-ambient-row, .sp-install-row {
+    transition: transform .1s cubic-bezier(.3,0,.5,1), opacity .1s ease,
+                background .2s, border-color .2s, color .2s;
+  }
+  .era-hd:active  { transform: scale(0.98);  opacity: .88; }
+  .ev:active      { transform: scale(0.985); opacity: .82; }
+  .dp-handle:active, .dp-close:active { transform: scale(0.92); opacity: .7; }
+  .back-link:active { transform: scale(0.955); opacity: .85; }
+  #settingsBtn:active { transform: scale(0.92); opacity: .85; }
+  .theme-opt:active, .sp-ambient-row:active { transform: scale(0.96); opacity: .8; }
   </style>
 </head>
 <body>
@@ -359,7 +370,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-spirit" style="border-color:rgba(155,127,232,.35);color:#c9b3ff;background:rgba(155,127,232,.1)">Spirit World</span>
-          <span class="era-count">3 events</span>
+          <span class="era-count">5 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -391,6 +402,22 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Vaatu breaks the barrier between worlds</div><div class="ev-tags"><span class="ev-tag tag-spirit">Spirit World</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Era of Raava" data-year="Ancient"
+            data-title="Tui and La Manifest in the Physical World"
+            data-desc="The Moon Spirit Tui and Ocean Spirit La take mortal form as two koi fish — one black, one white — circling each other eternally in a sacred pond at the North Pole. Their physical presence in the mortal world anchors waterbending itself. If either is killed, all waterbending ceases. This vulnerability will be exploited, tragically, during the Siege of the North a century into the Hundred Year War.">
+            <div class="ev-year">Ancient</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Tui and La manifest as koi fish at the North Pole</div><div class="ev-tags"><span class="ev-tag tag-water">Water</span><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Era of Raava" data-year="Ancient"
+            data-title="The Mother of Faces Gives Birth to Koh"
+            data-desc="The Mother of Faces — an ancient and powerful spirit who dwells in a sacred river — gives birth to Koh the Face Stealer. In time, they become separated, and Koh becomes one of the most feared entities in the Spirit World. Their reunion, thousands of years later, will be sought by Avatar Wan Shi Tong. Koh himself will steal the face of Avatar Kuruk's beloved in a moment of karmic cruelty.">
+            <div class="ev-year">Ancient</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The Mother of Faces gives birth to Koh the Face Stealer</div><div class="ev-tags"><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -408,7 +435,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-air">Air</span>
-          <span class="era-count">5 events</span>
+          <span class="era-count">8 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -456,6 +483,22 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The four nations begin to form</div><div class="ev-tags"><span class="ev-tag tag-air">Air</span><span class="ev-tag tag-water">Water</span><span class="ev-tag tag-earth">Earth</span><span class="ev-tag tag-fire">Fire</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Avatar Wan" data-year="9,829 BG"
+            data-title="Wan Spends His Remaining Life Trying to Keep Peace"
+            data-desc="As the first Avatar, Wan travels the world attempting to maintain peace between the peoples now spread across it. His efforts are of little success — the violence between groups continues throughout his lifetime and beyond. He dies haunted by the gap between what the Avatar was meant to do and what he actually managed to achieve. But the cycle is set in motion, and it will not stop.">
+            <div class="ev-year">9,829 BG onward</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Wan spends his life trying — and largely failing — to keep peace</div><div class="ev-tags"><span class="ev-tag tag-avatar">Avatar</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Avatar Wan" data-year="After Wan"
+            data-title="The Bhanti Tribe Emerges — Spirit Island Keepers"
+            data-desc="An ethnic group known as the Bhanti emerges on a remote island in the south. Over time, members of the Bhanti venture to the other nations and become sages — most notably the Fire Sages, Earth Sages, and Northern Water Tribe sages. While many drift from their roots, the Bhanti who remain on their island preserve ancient spiritual traditions and knowledge of Avatar history that would otherwise be lost.">
+            <div class="ev-year">After Wan</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The Bhanti tribe emerges — keepers of spirit island lore</div><div class="ev-tags"><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -475,7 +518,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation" style="color:var(--muted);border:1px solid rgba(107,138,171,.3);border-radius:20px;padding:.28em .65em;font-family:'Cinzel',serif;font-size:.33rem;letter-spacing:.14em;text-transform:uppercase">All Nations</span>
-          <span class="era-count">6 events</span>
+          <span class="era-count">10 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -515,9 +558,45 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Avatar Gun temporarily retires after the death of Mesose</div><div class="ev-tags"><span class="ev-tag tag-avatar">Avatar</span></div></div>
           </div>
 
-          <div class="ev major"
+          <div class="ev"
             data-era="The Early Avatars" data-year="Era of Szeto"
-            data-title="Avatar Szeto — The Administrator"
+            data-title="Lady Tienhai Dies — Old Iron's Grief Begins"
+            data-desc="The spirit Lady Tienhai, who centuries earlier vowed to protect a group of human settlers and watched their camp grow into the coastal city of Tienhaishi, falls in love and marries the city's ruler. She gives up her immortal spirit nature to live a mortal life — and eventually dies. Her death enrages the ancient armored spirit General Old Iron, who had loved her, setting up the confrontation Avatar Yangchen will eventually face.">
+            <div class="ev-year">Era of Szeto</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Lady Tienhai dies — Old Iron's grief begins</div><div class="ev-tags"><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="The Early Avatars" data-year="Ancient"
+            data-title="Ba Sing Se Founded as an Underground Mining Settlement"
+            data-desc="Ba Sing Se — which will become the largest city in the world and the cultural heart of the Earth Kingdom — begins as a subterranean mining settlement dug into the earth. Over thousands of years it grows outward and upward, surrounded by ring after ring of great walls, until it becomes a city that no army has ever breached from the outside.">
+            <div class="ev-year">c. 7,000+ BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Ba Sing Se founded as a subterranean mining settlement</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="The Early Avatars" data-year="Ancient"
+            data-title="Oma and Shu — Omashu Founded"
+            data-desc="Oma and Shu are the first known humans to master specific earthbending techniques, learning directly from the badgermoles. Two lovers from warring villages, they meet secretly in the caves beneath the mountains. When Shu is killed in the war between their people, Oma ends the conflict alone — and founds the city of Omashu in her lover's honor, built atop the mountain where they met.">
+            <div class="ev-year">Ancient</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Oma and Shu — Omashu founded in memory of lost love</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="The Early Avatars" data-year="Ancient"
+            data-title="The Fire Nation Unified Under the First Fire Lord"
+            data-desc="After centuries of warring warlords across the Fire Islands, one man defeats the remaining factions and unites the archipelago under the first Fire Lord. Initially a spiritual ruler alongside the Fire Sages, the office gradually accumulates political power over generations, becoming hereditary and sovereign. The Sun Warriors who originally taught firebending from the dragons eventually go into total isolation.">
+            <div class="ev-year">Ancient</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Fire Islands unified — the first Fire Lord takes power</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span></div></div>
+          </div>
+
+        </div>
+       </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         AVATAR YANGCHEN
             data-desc="Avatar Szeto is born in the Fire Nation. In his early life, a major crisis threatens to fracture the Fire Nation entirely. Rather than fighting wars, Szeto works from within the system as a government official — becoming one of the most effective administrators in Fire Nation history. He ends the conflict between the noble clans, restores the economy, and ushers in a long era of political stability and prosperity. He is celebrated with the Festival of Szeto, still observed in Roku's time.">
             <div class="ev-year">Era of Szeto</div>
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Avatar Szeto unifies the Fire Nation through governance</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-avatar">Avatar</span></div></div>
@@ -548,7 +627,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-air">Air</span>
-          <span class="era-count">6 events</span>
+          <span class="era-count">9 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -604,6 +683,22 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Yangchen signs the Fifth Nation treaty — then dies</div><div class="ev-tags"><span class="ev-tag tag-water">Water</span><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Avatar Yangchen" data-year="Year 9"
+            data-title="The Platinum Affair — Nations Enter Diplomatic Isolation"
+            data-desc="A diplomatic catastrophe: the Fire Nation and Water Tribes secretly back a rebel general's bid for the Earth Kingdom throne. When the Earth King defeats the rebellion and discovers the betrayal, he closes all ports and declares that diplomatic relations will resume only when the platinum used to bribe the general appears as stone — meaning at least a century. The three other nations enter matching states of isolation, setting up the shang city trading system Yangchen will later have to dismantle.">
+            <div class="ev-year">Year 9</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The Platinum Affair — the four nations enter diplomatic isolation</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-water">Water</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Avatar Yangchen" data-year="Late era"
+            data-title="Wan Shi Tong's Library Brought into the Physical World"
+            data-desc="Wan Shi Tong — the spirit who knows ten thousand things — moves his vast library from the Spirit World into the physical world, burying it beneath the Si Wong Desert. He opens it to human scholars seeking knowledge, demanding they bring something he does not already know in exchange. The library will remain there for thousands of years, until its discovery by Team Avatar in Aang's era.">
+            <div class="ev-year">Sometime before 345 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Wan Shi Tong's Library moved into the physical world</div><div class="ev-tags"><span class="ev-tag tag-spirit">Spirits</span><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -621,7 +716,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-water">Water</span>
-          <span class="era-count">5 events</span>
+          <span class="era-count">8 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -669,6 +764,22 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Kuruk dies at 33 — youngest Avatar in recorded history</div><div class="ev-tags"><span class="ev-tag tag-water">Water</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Avatar Kuruk" data-year="Between 316–312 BG"
+            data-title="Jianzhu and Kelsang — Training to Find the Next Avatar"
+            data-desc="Before Kuruk dies, he mentors two promising young men who will become the Earth Kingdom's foremost Avatar hunters: the earthbender Jianzhu and the Air Nomad monk Kelsang. Both are brilliant in different ways. Jianzhu is a political genius and master earthbender. Kelsang is compassionate and spiritually gifted. Together they will search for and ultimately misidentify Kuruk's successor — with consequences that will define Avatar Kyoshi's origin.">
+            <div class="ev-year">~316–312 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Jianzhu and Kelsang trained to find the next Avatar</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-air">Air Nomads</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Avatar Kuruk" data-year="After 312 BG"
+            data-title="The Fifth Nation Rises — Tagaka's Ascent"
+            data-desc="With Kuruk dead and no Avatar to replace him, the pirate confederation known as the Fifth Nation expands dramatically. Under the leadership of Tulok and then his daughter Tagaka, the Fifth Nation becomes the most powerful pirate fleet in the world. Tagaka defeats the Earth Kingdom's navy in open battle and kills the last admiral of Ba Sing Se in a duel, leaving the ocean lanes unprotected for decades.">
+            <div class="ev-year">After 312 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The Fifth Nation rises — Tagaka becomes pirate queen</div><div class="ev-tags"><span class="ev-tag tag-water">Water</span><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -686,7 +797,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-earth">Earth</span>
-          <span class="era-count">8 events</span>
+          <span class="era-count">12 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -759,6 +870,30 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Kyoshi dies at 230 — Roku &amp; Sozin born the same day</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-fire">Fire Nation</span></div></div>
           </div>
 
+          <div class="ev major"
+            data-era="Avatar Kyoshi" data-year="295 BG"
+            data-title="Yun Returns — Jianzhu Killed, the Camellia-Peony War"
+            data-desc="Yun, believed dead after being sacrificed to Father Glowworm, inexplicably returns — changed, cold, and consumed by vengeance. He kills Jianzhu in Qinchao during a confrontation with Kyoshi. Simultaneously, tension between Fire Nation noble clans erupts into the Camellia-Peony War. Kyoshi travels to the Fire Nation at Fire Lord Zoryu's invitation for the Festival of Szeto, where Yun's continued rampage — including hostage-taking at the royal palace — forces her to finally face him directly.">
+            <div class="ev-year">295 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Yun returns and kills Jianzhu — the Camellia-Peony War</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
+          <div class="ev major"
+            data-era="Avatar Kyoshi" data-year="295 BG"
+            data-title="Kyoshi Kills Yun — the Camellia-Peony War Ends"
+            data-desc="Kyoshi confronts Yun in Yokoya — the village where both their stories began. The Avatar mansion is destroyed in the battle. Kyoshi kills her childhood friend and buries him herself. Fire Lord Zoryu ends the Camellia-Peony War by using a decoy confession to disgrace the Saowon clan. Kyoshi, devastated, meets a Knowledge Seeker fox who becomes her lifelong animal guide.">
+            <div class="ev-year">295 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Kyoshi kills Yun — the war ends, the avatar mansion destroyed</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-fire">Fire Nation</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Avatar Kyoshi" data-year="~270–82 BG"
+            data-title="Kyoshi's Daughter Koko Succeeds Her as Governor"
+            data-desc="During her extraordinarily long life, Kyoshi sees her own daughter Koko grow up and eventually succeed her as governor of Kyoshi Island. Kyoshi outlives generations of her own family — a haunting feature of an Avatar who lives two centuries. The island remains independent and peaceful under Kyoshi's protection, one of the few places in the world that feels completely safe.">
+            <div class="ev-year">Late era</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Kyoshi's daughter Koko becomes governor of Kyoshi Island</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -776,7 +911,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-fire">Fire</span>
-          <span class="era-count">6 events</span>
+          <span class="era-count">10 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -832,6 +967,30 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Sozin lets Roku die — Aang born that same day</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-air">Air</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Avatar Roku" data-year="~58 BG"
+            data-title="Sozin Ascends the Throne — Dragon Hunts Begin"
+            data-desc="Fire Lord Taiso dies and Sozin takes the throne. Early in his reign, he unites the noble clans and lifts the poorest in the nation — a genuine attempt at good governance. But his ambition curdles. He organizes the first Dragon Hunts, using the prestige title 'Dragon' to reward nobles who kill the great fire-breathing beasts. Dragons, the original teachers of firebending, begin to disappear. The Sun Warriors watch in horror and go into total isolation.">
+            <div class="ev-year">~58 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Sozin takes the throne — Dragon Hunts begin</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Avatar Roku" data-year="50–40 BG"
+            data-title="Sozin Begins Colonizing the Earth Kingdom"
+            data-desc="With Roku away mastering the elements, Sozin quietly begins establishing Fire Nation colonies in Earth Kingdom territory — framing it as sharing Fire Nation prosperity with a 'lesser' civilization. By the time Roku discovers this at age 37, the colonies are already established and the people living in them have built lives there. Uprooting them will prove impossible for generations.">
+            <div class="ev-year">~50–40 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Sozin begins colonizing the Earth Kingdom in secret</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Avatar Roku" data-year="~30–12 BG"
+            data-title="The Prelude to War — Sozin Prepares in Secret"
+            data-desc="After Roku's warning, Sozin bides his time for decades. He studies the comet that bears his family name, understanding that its return will amplify firebending to an unprecedented degree. He builds the Fire Nation's military. He calculates that by striking all Air Temples simultaneously, the next Avatar — who will be born as an Air Nomad — can be eliminated before they master all four elements. The plan waits twenty-five years for the right moment.">
+            <div class="ev-year">~30–12 BG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Sozin prepares for war in secret — waiting for his comet</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -849,7 +1008,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-fire">Fire</span>
-          <span class="era-count">9 events</span>
+          <span class="era-count">14 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -929,6 +1088,38 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Zuko becomes Fire Lord</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Hundred Year War" data-year="99–100 AG"
+            data-title="Team Avatar's Journey — Books 1 & 2"
+            data-desc="Over the course of a year, Aang travels from the South Pole to the North Pole mastering waterbending under Katara, then through the Earth Kingdom to find an earthbending master. He learns from Toph Beifong — a blind twelve-year-old who is secretly the greatest earthbender alive. The group discovers Wan Shi Tong's Library in the desert, uncovers the Fire Nation's war plans, and barely escapes the Earth Kingdom as Ba Sing Se falls.">
+            <div class="ev-year">99–100 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Team Avatar journeys through Water and Earth — Books 1 &amp; 2</div><div class="ev-tags"><span class="ev-tag tag-water">Water</span><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-air">Air</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Hundred Year War" data-year="99 AG"
+            data-title="Siege of the North — Admiral Zhao Kills the Moon Spirit"
+            data-desc="The Fire Nation launches a massive naval assault on the Northern Water Tribe's capital Agna Qel'a. Admiral Zhao infiltrates the sacred pond and kills the Moon Spirit Tui — extinguishing the moon and stripping all waterbenders of their power. Princess Yue, who was given life by Tui's spirit as an infant, sacrifices herself to restore the Moon Spirit. Aang merges with the Ocean Spirit La and drives the entire Fire Navy back in a display of power unlike anything the world has seen.">
+            <div class="ev-year">Late 99 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Siege of the North — Zhao kills the Moon Spirit, Yue sacrifices herself</div><div class="ev-tags"><span class="ev-tag tag-water">Water</span><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Hundred Year War" data-year="100 AG"
+            data-title="The Solar Eclipse Invasion Fails"
+            data-desc="On the Day of Black Sun — when firebenders lose their power during a solar eclipse — a coordinated invasion force storms the Fire Nation capital. It fails: the Fire Lord and his family hide in bunkers underground, and the eclipse ends before they can be found. The invasion's leaders are captured or scattered. Sokka's father Hakoda is imprisoned. Aang escapes with Zuko — who has finally, definitively, chosen the right side.">
+            <div class="ev-year">100 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The solar eclipse invasion — fails, but Zuko joins Team Avatar</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span><span class="ev-tag tag-avatar">Avatar</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Hundred Year War" data-year="100 AG"
+            data-title="Aang Learns Firebending and Energybending"
+            data-desc="Aang and Zuko travel to the ancient Sun Warrior civilization — believed extinct — and relearn the true source of firebending from the last two living dragons, Ran and Shaw. Aang masters firebending. He then encounters the world's oldest living creature, a lion turtle who teaches him energybending — the ability to touch someone's spirit directly and alter their bending permanently. It is a technique not used since the era of Wan.">
+            <div class="ev-year">100 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Aang masters firebending and learns energybending</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire</span><span class="ev-tag tag-avatar">Avatar</span><span class="ev-tag tag-spirit">Spirits</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -946,7 +1137,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-air">Air</span>
-          <span class="era-count">7 events</span>
+          <span class="era-count">11 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -1010,6 +1201,30 @@
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Aang dies — Korra born that same day</div><div class="ev-tags"><span class="ev-tag tag-avatar">Avatar</span><span class="ev-tag tag-water">Water</span></div></div>
           </div>
 
+          <div class="ev"
+            data-era="Aang's Era" data-year="100–153 AG"
+            data-title="The Air Acolytes — Keeping the Culture Alive"
+            data-desc="With the Air Nomads extinct, Aang forms the Air Acolytes from his Official Avatar Aang Fan Club — non-benders who dedicate their lives to learning and preserving Air Nomad culture, philosophy, and traditions. It is an imperfect solution, but the only one available. The Air Acolytes will live alongside Tenzin and his family at Air Temple Island, keeping the flame lit until Harmonic Convergence returns airbending to the world.">
+            <div class="ev-year">~101 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Aang forms the Air Acolytes to preserve Air Nomad culture</div><div class="ev-tags"><span class="ev-tag tag-air">Air Nomads</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Aang's Era" data-year="101–102 AG"
+            data-title="The Southern Reconstruction Project"
+            data-desc="Members of the Northern Water Tribe travel south to help rebuild the Southern Water Tribe, which was left devastated by a century of raids. The reconstruction helps materially, but also stirs conflict — the South resents the condescension of Northern 'helpers' who treat them as lesser. Southern nationalism grows, and the political tension between the two poles will define a major crisis in Korra's time.">
+            <div class="ev-year">101–102 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The Southern Reconstruction Project — rebuilding the Water Tribe</div><div class="ev-tags"><span class="ev-tag tag-water">Water Tribes</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Aang's Era" data-year="167 AG"
+            data-title="Zuko Passes the Throne to Izumi — Becomes an Ambassador"
+            data-desc="Fire Lord Zuko, having spent decades working to rebuild the world's trust in the Fire Nation, passes the throne to his daughter Izumi and steps down. He takes the title 'Lord' rather than Fire Lord and becomes a roving ambassador for peace — continuing the work of reconciliation in a more personal way. He remains active for decades, appearing to stop the Red Lotus's kidnapping attempt on young Korra.">
+            <div class="ev-year">167 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Zuko passes the throne to Izumi — becomes a peace ambassador</div><div class="ev-tags"><span class="ev-tag tag-fire">Fire Nation</span></div></div>
+          </div>
+
         </div>
        </div>
       </div>
@@ -1027,7 +1242,7 @@
         </div>
         <div class="era-hd-right">
           <span class="era-nation tag-water">Water</span>
-          <span class="era-count">10 events</span>
+          <span class="era-count">15 events</span>
           <svg class="era-arrow" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10l5 5 5-5z"/></svg>
         </div>
       </div>
@@ -1113,6 +1328,38 @@
             data-desc="With the monarchy abolished after Kuvira's surrender, the Earth Kingdom — the oldest and largest nation in the world — begins transitioning to democratically elected governments across its many states and provinces. The United Republic also elects a new President. The world Aang built continues to change — shaped now by Korra's choices, her losses, and the new era she is still in the middle of writing.">
             <div class="ev-year">174 AG</div>
             <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">The Earth Kingdom transitions to democratic governance</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Era of Korra" data-year="170 AG"
+            data-title="Republic City's Pro-Bending Arena Destroyed"
+            data-desc="The Equalists stage a devastating attack on the Pro-Bending Arena during the championship final, destroying the arena and signaling that their revolution has moved from rhetoric to open warfare. It marks the end of Korra's relatively peaceful arrival in the city and the beginning of Republic City's existential crisis.">
+            <div class="ev-year">170 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Equalists destroy the Pro-Bending Arena — open warfare begins</div><div class="ev-tags"><span class="ev-tag tag-earth">Republic City</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Era of Korra" data-year="171 AG"
+            data-title="Korra Becomes the First Metalbending Avatar"
+            data-desc="While escaping Zaheer's forces at the Metal Clan city of Zaofu, Korra becomes the first Avatar in history to master metalbending — a technique invented by Toph Beifong less than a century earlier. A small but historic milestone: proof that even this deep into the Avatar Cycle, there are still new bending frontiers to cross.">
+            <div class="ev-year">171 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Korra becomes the first metalbending Avatar</div><div class="ev-tags"><span class="ev-tag tag-earth">Earth Kingdom</span><span class="ev-tag tag-avatar">Avatar</span></div></div>
+          </div>
+
+          <div class="ev major"
+            data-era="Era of Korra" data-year="171 AG"
+            data-title="Jinora Receives Her Airbending Tattoos"
+            data-desc="Tenzin's eldest daughter Jinora — who played a crucial role in restoring Korra after Unalaq destroyed Raava — receives her airbending tattoos and is anointed a master airbender. She is the first new Air Nomad master since Avatar Aang. It is a rare moment of celebration in a year full of crises. The Air Nation is not just surviving — it is genuinely growing.">
+            <div class="ev-year">171 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Jinora receives her tattoos — first new airbending master since Aang</div><div class="ev-tags"><span class="ev-tag tag-air">Air Nomads</span></div></div>
+          </div>
+
+          <div class="ev"
+            data-era="Era of Korra" data-year="174 AG"
+            data-title="Hiroshi Sato Sacrifices Himself"
+            data-desc="Hiroshi Sato — Asami's father, who spent years building Equalist mecha suits before being imprisoned — is freed to help fight Kuvira's enormous mecha suit. He cuts through the platinum hull to create an opening, knowing he cannot escape in time. Kuvira closes the hull on his plane. He dies saving his daughter and the city he once nearly helped destroy — perhaps the most redemptive death in the entire Avatar saga.">
+            <div class="ev-year">174 AG</div>
+            <div class="ev-body"><div class="ev-dot"></div><div class="ev-title">Hiroshi Sato sacrifices himself against Kuvira's mecha suit</div><div class="ev-tags"><span class="ev-tag tag-earth">Republic City</span></div></div>
           </div>
 
         </div>
