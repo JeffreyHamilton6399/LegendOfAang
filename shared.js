@@ -136,13 +136,14 @@
 
 
 /* ══════════════════════════════════════════
-   2. SETTINGS PANEL — theme + ambient toggle
+   2. SETTINGS PANEL — theme + ambient/sfx volume
 ══════════════════════════════════════════ */
 (function () {
   const settingsBtn = document.getElementById('settingsBtn');
   const panel       = document.getElementById('settingsPanel');
   if (!settingsBtn || !panel) return;
 
+  // ── Theme ────────────────────────────────
   const opts   = panel.querySelectorAll('.theme-opt');
   const THEMES = ['dark', 'theme-parchment', 'theme-water', 'theme-earth'];
   const saved  = localStorage.getItem('avatarhub_theme') || 'dark';
@@ -155,6 +156,32 @@
   }
   applyTheme(saved);
 
+  // ── Ambient volume slider ────────────────
+  const ambientSlider = document.getElementById('ambientVolSlider');
+  if (ambientSlider) {
+    const savedAmbVol = parseFloat(localStorage.getItem('avatarhub_ambient_vol') ?? '0.55');
+    ambientSlider.value = Math.round(savedAmbVol * 100);
+    ambientSlider.addEventListener('input', () => {
+      const vol = ambientSlider.value / 100;
+      localStorage.setItem('avatarhub_ambient_vol', vol.toFixed(2));
+      // propagate to any running ambient gain node
+      if (window._avatarSetAmbientVol) window._avatarSetAmbientVol(vol);
+    });
+  }
+
+  // ── SFX volume slider ────────────────────
+  const sfxSlider = document.getElementById('sfxVolSlider');
+  if (sfxSlider) {
+    const savedSfxVol = parseFloat(localStorage.getItem('avatarhub_sfx_vol') ?? '1');
+    sfxSlider.value = Math.round(savedSfxVol * 100);
+    sfxSlider.addEventListener('input', () => {
+      const vol = sfxSlider.value / 100;
+      localStorage.setItem('avatarhub_sfx_vol', vol.toFixed(2));
+      if (window._avatarSetSfxVol) window._avatarSetSfxVol(vol);
+    });
+  }
+
+  // ── Panel open/close ─────────────────────
   settingsBtn.addEventListener('click', e => {
     e.stopPropagation();
     const isOpen = panel.classList.toggle('open');
@@ -208,6 +235,16 @@
   if (sessionStorage.getItem('avatarhub_ambient_active') !== '1') return;
 
   let _raw = null, _ctx = null, _gain = null, _started = false;
+  const _targetVol = () => parseFloat(localStorage.getItem('avatarhub_ambient_vol') ?? '0.55');
+
+  // Expose setter so settings slider can control it live
+  window._avatarSetAmbientVol = function(v) {
+    if (!_gain || !_ctx) { localStorage.setItem('avatarhub_ambient_vol', v.toFixed(2)); return; }
+    _gain.gain.cancelScheduledValues(_ctx.currentTime);
+    _gain.gain.setValueAtTime(_gain.gain.value, _ctx.currentTime);
+    _gain.gain.linearRampToValueAtTime(v, _ctx.currentTime + 0.3);
+    localStorage.setItem('avatarhub_ambient_vol', v.toFixed(2));
+  };
 
   // Prefetch audio in the background — use fetch over XHR for better streaming support
   fetch('audio/ambient.MP3')
@@ -259,7 +296,7 @@
     src.connect(_gain).connect(_ctx.destination);
     src.start(0, offset);
     _gain.gain.setValueAtTime(0, _ctx.currentTime);
-    _gain.gain.linearRampToValueAtTime(0.55, _ctx.currentTime + 2.5);
+    _gain.gain.linearRampToValueAtTime(_targetVol(), _ctx.currentTime + 2.5);
 
     const ambientRow = document.getElementById('ambientRow');
     if (ambientRow) ambientRow.classList.add('active');
@@ -267,16 +304,16 @@
     // Duck during video playback
     const video = document.getElementById('mainVideo');
     if (video) {
-      video.addEventListener('play',  () => fadeTo(0),    { passive: true });
-      video.addEventListener('pause', () => fadeTo(0.55), { passive: true });
-      video.addEventListener('ended', () => fadeTo(0.55), { passive: true });
+      video.addEventListener('play',  () => fadeTo(0),            { passive: true });
+      video.addEventListener('pause', () => fadeTo(_targetVol()), { passive: true });
+      video.addEventListener('ended', () => fadeTo(_targetVol()), { passive: true });
     }
 
     if (ambientRow) {
       ambientRow.addEventListener('click', () => {
         if (!_gain) return;
-        const isPlaying = _gain.gain.value > 0.1;
-        fadeTo(isPlaying ? 0 : 0.55);
+        const isPlaying = _gain.gain.value > 0.01;
+        fadeTo(isPlaying ? 0 : _targetVol());
         localStorage.setItem('avatarhub_ambient_off', isPlaying ? '1' : '0');
         sessionStorage.setItem('avatarhub_ambient_active', isPlaying ? '0' : '1');
         ambientRow.classList.toggle('active', !isPlaying);
@@ -298,6 +335,10 @@
    Deferred until idle to avoid blocking paint
 ══════════════════════════════════════════ */
 (function () {
+  // Expose volume setter so settings slider can control it live
+  let _sfxVol = parseFloat(localStorage.getItem('avatarhub_sfx_vol') ?? '1');
+  window._avatarSetSfxVol = function(v) { _sfxVol = Math.max(0, Math.min(1, v)); };
+
   const _run = function () {
     let _sfxCtx = null;
 
@@ -307,7 +348,8 @@
       return _sfxCtx;
     }
 
-    function playTick(freq, dur, vol, Q) {
+    function playTick(freq, dur, baseVol, Q) {
+      if (_sfxVol <= 0) return;
       const ctx = getSfxCtx();
       if (!ctx) return;
       if (ctx.state === 'suspended') ctx.resume();
@@ -323,7 +365,7 @@
       const bp   = ctx.createBiquadFilter();
       const gain = ctx.createGain();
       bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = Q;
-      gain.gain.setValueAtTime(vol, ctx.currentTime);
+      gain.gain.setValueAtTime(baseVol * _sfxVol, ctx.currentTime);
       src.buffer = buf;
       src.connect(bp).connect(gain).connect(ctx.destination);
       src.start();

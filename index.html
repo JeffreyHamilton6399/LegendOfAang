@@ -707,6 +707,57 @@ a:active, button:active, [role="button"]:active,
   opacity: .83 !important;
   transition: transform .09s cubic-bezier(.3,0,.5,1), opacity .09s ease !important;
 }
+
+/* ── Install App Banner ── */
+.install-banner {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; gap: 1.2rem;
+  background: linear-gradient(120deg, rgba(10,17,28,.9) 0%, rgba(20,35,55,.9) 100%);
+  border: 1px solid rgba(201,168,76,.2);
+  border-radius: 18px; padding: 1.1rem 1.4rem;
+  margin-top: .5rem;
+  backdrop-filter: blur(12px);
+  animation: cardIn .5s cubic-bezier(.22,1,.36,1) both;
+  transition: border-color .25s, box-shadow .25s;
+}
+.install-banner:hover { border-color: rgba(201,168,76,.45); box-shadow: 0 4px 28px rgba(201,168,76,.1); }
+.install-banner-icon {
+  width: 42px; height: 42px; flex-shrink: 0;
+  background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.25);
+  border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  color: var(--gold);
+}
+.install-banner-icon svg { width: 20px; height: 20px; }
+.install-banner-text { flex: 1; min-width: 0; }
+.install-banner-title {
+  font-family: 'Cinzel', serif; font-size: .52rem; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--white); margin-bottom: .25rem;
+}
+.install-banner-sub {
+  font-family: 'Philosopher', serif; font-size: .72rem;
+  color: var(--muted); line-height: 1.45;
+}
+.install-banner-btn {
+  flex-shrink: 0; display: flex; align-items: center; gap: .5rem;
+  font-family: 'Cinzel', serif; font-size: .42rem; letter-spacing: .2em; text-transform: uppercase;
+  color: #04070d; background: linear-gradient(135deg, var(--gold), #a07828);
+  border: none; border-radius: 30px; padding: .65em 1.3em; cursor: pointer;
+  transition: opacity .2s, box-shadow .2s;
+  box-shadow: 0 3px 14px rgba(201,168,76,.35);
+  white-space: nowrap;
+}
+.install-banner-btn:hover { opacity: .9; box-shadow: 0 5px 20px rgba(201,168,76,.5); }
+#installBanner.hidden { display: none; }
+body.theme-parchment .install-banner,
+body.theme-water    .install-banner,
+body.theme-earth    .install-banner { background: rgba(255,255,255,.55); border-color: rgba(0,0,0,.1); }
+body.theme-parchment .install-banner-title,
+body.theme-water    .install-banner-title,
+body.theme-earth    .install-banner-title { color: var(--white); }
+@media (max-width: 500px) {
+  .install-banner { flex-wrap: wrap; }
+  .install-banner-btn { width: 100%; justify-content: center; }
+}
 </style>
 </head>
 <body>
@@ -1081,6 +1132,21 @@ a:active, button:active, [role="button"]:active,
       </div>
     </a>
 
+    <!-- Install App Banner -->
+    <div class="install-banner" id="installBanner">
+      <div class="install-banner-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
+      </div>
+      <div class="install-banner-text">
+        <div class="install-banner-title">Take it everywhere</div>
+        <div class="install-banner-sub">Install AvatarArchive as an app — offline-ready, no browser chrome, native feel.</div>
+      </div>
+      <button class="install-banner-btn" id="installBtn">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;flex-shrink:0"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
+        Install App
+      </button>
+    </div>
+
   </div>
 
 
@@ -1095,7 +1161,7 @@ a:active, button:active, [role="button"]:active,
 
 <!-- Settings panel -->
 <div id="settingsPanel">
-  <!-- Ambient sound -->
+  <!-- Sound -->
   <div class="sp-section">
     <div class="sp-section-label">Sound</div>
     <div class="sp-ambient-row" id="ambientRow" title="Toggle ambient sound">
@@ -1109,6 +1175,14 @@ a:active, button:active, [role="button"]:active,
         Ambient
       </div>
       <div class="sp-toggle"></div>
+    </div>
+    <div class="sp-vol-row">
+      <span class="sp-vol-label">Volume</span>
+      <input class="sp-vol-slider" id="ambientVolSlider" type="range" min="0" max="100" value="55" title="Ambient volume">
+    </div>
+    <div class="sp-vol-row">
+      <span class="sp-vol-label">SFX</span>
+      <input class="sp-vol-slider" id="sfxVolSlider" type="range" min="0" max="100" value="100" title="UI sound effects volume">
     </div>
   </div>
   <div class="sp-divider"></div>
@@ -1126,14 +1200,6 @@ a:active, button:active, [role="button"]:active,
     </button>
     <button class="theme-opt" data-theme="theme-earth">
       <span class="theme-swatch" style="background:#6abf69"></span> Earth
-    </button>
-  </div>
-  <div class="sp-divider"></div>
-  <!-- Install -->
-  <div class="sp-section">
-    <button class="sp-install-row" id="installBtn" title="Download AvatarArchive App">
-      <svg viewBox="0 0 24 24" fill="currentColor" style="width:11px;height:11px;flex-shrink:0;opacity:.6"><path d="M19 9h-4V3H9v6H5l7 7 7-7zm-8 2V5h2v6h1.17L12 13.17 9.83 11H11zm-6 7h14v2H5v-2z"/></svg>
-      Download App
     </button>
   </div>
   <div class="sp-divider"></div>
@@ -1210,7 +1276,7 @@ a:active, button:active, [role="button"]:active,
 </a>
 
 <script>
-/* ── Settings panel + Theme toggle ── */
+/* ── Settings panel + Theme toggle + Volume sliders ── */
 (function(){
   const settingsBtn = document.getElementById('settingsBtn');
   const panel       = document.getElementById('settingsPanel');
@@ -1225,6 +1291,30 @@ a:active, button:active, [role="button"]:active,
     localStorage.setItem('avatarhub_theme', t);
   }
   applyTheme(saved);
+
+  // ── Ambient volume slider ──
+  const ambientSlider = document.getElementById('ambientVolSlider');
+  if (ambientSlider) {
+    const savedVol = parseFloat(localStorage.getItem('avatarhub_ambient_vol') ?? '0.55');
+    ambientSlider.value = Math.round(savedVol * 100);
+    ambientSlider.addEventListener('input', () => {
+      const vol = ambientSlider.value / 100;
+      localStorage.setItem('avatarhub_ambient_vol', vol.toFixed(2));
+      if (window._avatarSetAmbientVol) window._avatarSetAmbientVol(vol);
+    });
+  }
+
+  // ── SFX volume slider ──
+  const sfxSlider = document.getElementById('sfxVolSlider');
+  if (sfxSlider) {
+    const savedSfx = parseFloat(localStorage.getItem('avatarhub_sfx_vol') ?? '1');
+    sfxSlider.value = Math.round(savedSfx * 100);
+    sfxSlider.addEventListener('input', () => {
+      const vol = sfxSlider.value / 100;
+      localStorage.setItem('avatarhub_sfx_vol', vol.toFixed(2));
+      if (window._avatarSetSfxVol) window._avatarSetSfxVol(vol);
+    });
+  }
 
   settingsBtn.addEventListener('click', e => {
     e.stopPropagation();
@@ -1321,6 +1411,7 @@ a:active, button:active, [role="button"]:active,
 
   function ambientFadeIn(offset) {
     if (ambientActive || !audioCtx || !_ambientDecoded) return;
+    const targetVol = parseFloat(localStorage.getItem('avatarhub_ambient_vol') ?? '0.55');
     const src  = audioCtx.createBufferSource();
     const gain = audioCtx.createGain();
     src.buffer = _ambientDecoded; src.loop = true; gain.gain.value = 0;
@@ -1333,7 +1424,16 @@ a:active, button:active, [role="button"]:active,
     sessionStorage.setItem('avatarhub_ambient_active', '1');
     sessionStorage.setItem('avatarhub_ambient_t0', Date.now());
     gain.gain.setValueAtTime(0, audioCtx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.55, audioCtx.currentTime + 2.5);
+    gain.gain.linearRampToValueAtTime(targetVol, audioCtx.currentTime + 2.5);
+
+    // Expose live setter for volume slider
+    window._avatarSetAmbientVol = function(v) {
+      if (!ambientGain || !audioCtx) return;
+      ambientGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      ambientGain.gain.setValueAtTime(ambientGain.gain.value, audioCtx.currentTime);
+      ambientGain.gain.linearRampToValueAtTime(v, audioCtx.currentTime + 0.3);
+      localStorage.setItem('avatarhub_ambient_vol', v.toFixed(2));
+    };
   }
 
   function ambientFadeOut() {
@@ -1812,9 +1912,10 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
    INSTALL / DOWNLOAD APP BUTTON
 ══════════════════════════════════════════ */
 (function(){
-  const btn   = document.getElementById('installBtn');
-  const modal = document.getElementById('installModal');
-  const close = document.getElementById('installClose');
+  const btn    = document.getElementById('installBtn');
+  const banner = document.getElementById('installBanner');
+  const modal  = document.getElementById('installModal');
+  const close  = document.getElementById('installClose');
   let deferredPrompt = null;
 
   window.addEventListener('beforeinstallprompt', e => {
@@ -1822,19 +1923,23 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
     deferredPrompt = e;
   });
 
-  btn.addEventListener('click', async () => {
+  async function handleInstall() {
     if (deferredPrompt) {
       deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
+      const choice = await deferredPrompt.userChoice;
       deferredPrompt = null;
+      if (choice.outcome === 'accepted' && banner) banner.classList.add('hidden');
     } else {
       modal.classList.add('open');
     }
-  });
+  }
 
-  close.addEventListener('click', () => modal.classList.remove('open'));
+  if (btn) btn.addEventListener('click', handleInstall);
+  if (close) close.addEventListener('click', () => modal.classList.remove('open'));
   modal.addEventListener('click', e => { if(e.target===modal) modal.classList.remove('open'); });
-  window.addEventListener('appinstalled', () => { if(btn) btn.style.display='none'; });
+  window.addEventListener('appinstalled', () => {
+    if (banner) banner.classList.add('hidden');
+  });
 })();
 
 
@@ -1848,6 +1953,10 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
 (function () {
   'use strict';
 
+  // SFX volume — reads from localStorage, exposed as setter for slider
+  let _sfxVol = parseFloat(localStorage.getItem('avatarhub_sfx_vol') ?? '1');
+  window._avatarSetSfxVol = function(v) { _sfxVol = Math.max(0, Math.min(1, v)); };
+
   // ── Shared AudioContext (lazy, reuse existing if index already made one) ──
   let _sfxCtx = null;
   function getSfxCtx() {
@@ -1857,7 +1966,8 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
   }
 
   // ── Core synth: shaped noise burst ───────────────────────────────────────
-  function playTick(freq, dur, vol, Q) {
+  function playTick(freq, dur, baseVol, Q) {
+    if (_sfxVol <= 0) return;
     const ctx = getSfxCtx();
     if (!ctx) return;
     if (ctx.state === 'suspended') ctx.resume();
@@ -1872,7 +1982,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
     const bp   = ctx.createBiquadFilter();
     const gain = ctx.createGain();
     bp.type = 'bandpass'; bp.frequency.value = freq; bp.Q.value = Q;
-    gain.gain.setValueAtTime(vol, ctx.currentTime);
+    gain.gain.setValueAtTime(baseVol * _sfxVol, ctx.currentTime);
     src.buffer = buf;
     src.connect(bp).connect(gain).connect(ctx.destination);
     src.start();
@@ -1880,6 +1990,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
 
   // ── Punchy tonal click with real impact ──────────────────────────────────
   function playClickSfx() {
+    if (_sfxVol <= 0) return;
     const ctx = getSfxCtx();
     if (!ctx || ctx.state !== 'running') return;
     const now = ctx.currentTime;
@@ -1888,7 +1999,7 @@ self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>
     osc.type = 'sine';
     osc.frequency.setValueAtTime(200, now);
     osc.frequency.exponentialRampToValueAtTime(55, now + 0.08);
-    oscG.gain.setValueAtTime(0.55, now);
+    oscG.gain.setValueAtTime(0.55 * _sfxVol, now);
     oscG.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
     osc.connect(oscG).connect(ctx.destination);
     osc.start(now); osc.stop(now + 0.13);

@@ -219,6 +219,40 @@ body.theme-parchment .theme-opt:hover,
 body.theme-water    .theme-opt:hover,
 body.theme-earth    .theme-opt:hover { background: rgba(0,0,0,.05); }
 
+/* ── Volume slider row ── */
+.sp-vol-row {
+  display: flex; align-items: center; gap: .65rem;
+  padding: .25em .5em .35em;
+}
+.sp-vol-label {
+  font-family: 'Cinzel', serif; font-size: .38rem; letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(240,244,255,.45); flex-shrink: 0; width: 3.8rem;
+}
+body.theme-parchment .sp-vol-label,
+body.theme-water    .sp-vol-label,
+body.theme-earth    .sp-vol-label { color: var(--muted); }
+.sp-vol-slider {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 3px; border-radius: 2px;
+  background: rgba(255,255,255,.12); outline: none; cursor: pointer;
+  accent-color: var(--gold);
+}
+.sp-vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--gold); border: none; cursor: pointer;
+  box-shadow: 0 0 6px rgba(201,168,76,.4);
+  transition: transform .15s;
+}
+.sp-vol-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.sp-vol-slider::-moz-range-thumb {
+  width: 13px; height: 13px; border-radius: 50%;
+  background: var(--gold); border: none; cursor: pointer;
+}
+body.theme-parchment .sp-vol-slider,
+body.theme-water    .sp-vol-slider,
+body.theme-earth    .sp-vol-slider { background: rgba(0,0,0,.15); }
+
 /* ── Install row ── */
 .sp-install-row {
   display: flex; align-items: center; gap: .6rem;
