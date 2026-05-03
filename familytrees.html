@@ -57,24 +57,20 @@ body{background:var(--bg);color:var(--white);font-family:'Philosopher',serif;ove
   color:rgba(201,168,76,.5);cursor:pointer;pointer-events:all;transition:all .15s;}
 .zreset:hover{color:rgba(201,168,76,.9);}
 
-/* ── Section label ── */
-.sec-label{font-family:'Cinzel',serif;font-size:.28rem;letter-spacing:.35em;text-transform:uppercase;
-  color:rgba(201,168,76,.3);white-space:nowrap;pointer-events:none;position:absolute;}
-
 /* ── Tree block ── */
 .tree-wrap{position:absolute;display:inline-flex;flex-direction:column;align-items:center;}
 .tree-title{font-family:'Cinzel',serif;font-size:.3rem;letter-spacing:.28em;text-transform:uppercase;
-  margin-bottom:6px;white-space:nowrap;}
+  margin-bottom:4px;white-space:nowrap;}
 
 /* ── Family tree nodes ── */
 .ftree{display:flex;flex-direction:column;align-items:center;position:relative;}
 .fn{display:flex;flex-direction:column;align-items:center;}
 .couple{display:flex;align-items:flex-start;gap:2px;}
 .mx{font-family:'Cinzel',serif;font-size:.5rem;color:var(--muted);padding:0 2px;opacity:.5;margin-top:12px;}
-.drop{width:1px;height:12px;background:var(--tc,var(--gold-dim));}
+.drop{width:1px;height:8px;background:var(--tc,var(--gold-dim));}
 .cr{display:flex;align-items:flex-start;}
-.cb{display:flex;flex-direction:column;align-items:center;padding:0 4px;position:relative;}
-.cb::before{content:'';display:block;width:1px;height:12px;background:var(--tc,var(--gold-dim));}
+.cb{display:flex;flex-direction:column;align-items:center;padding:0 3px;position:relative;}
+.cb::before{content:'';display:block;width:1px;height:8px;background:var(--tc,var(--gold-dim));}
 .cb::after{content:'';position:absolute;top:0;height:1px;background:var(--tc,var(--gold-dim));left:0;right:0;}
 .cb:first-child::after{left:50%;}
 .cb:last-child::after{right:50%;}
@@ -108,6 +104,53 @@ body{background:var(--bg);color:var(--white);font-family:'Philosopher',serif;ove
 /* ── Bridge SVG lines ── */
 .bridge{stroke:rgba(201,168,76,.22);stroke-width:1.5;fill:none;stroke-dasharray:5 4;}
 
+/* ── Search bar ── */
+#searchWrap{position:fixed;top:12px;right:14px;z-index:60;display:flex;align-items:center;gap:6px;pointer-events:all;position:fixed;}
+#searchInner{position:relative;display:flex;align-items:center;}
+#searchBox{font-family:'Cinzel',serif;font-size:.34rem;letter-spacing:.1em;
+  background:rgba(6,10,20,.88);border:1px solid rgba(201,168,76,.25);border-radius:20px;
+  padding:.42em 1em .42em 2em;color:var(--white);width:180px;outline:none;
+  backdrop-filter:blur(16px);transition:border-color .2s,width .2s,box-shadow .2s;}
+#searchBox:focus{border-color:rgba(201,168,76,.6);width:230px;box-shadow:0 0 18px rgba(201,168,76,.12);}
+#searchBox::placeholder{color:rgba(107,138,171,.5);}
+#searchIcon{position:absolute;left:9px;top:50%;transform:translateY(-50%);
+  pointer-events:none;color:rgba(201,168,76,.5);font-size:.65rem;line-height:1;}
+#searchCount{font-family:'Cinzel',serif;font-size:.28rem;letter-spacing:.12em;
+  color:rgba(201,168,76,.55);white-space:nowrap;min-width:36px;text-align:left;}
+#searchClear{background:none;border:none;color:rgba(107,138,171,.5);cursor:pointer;
+  font-size:.8rem;padding:.15em .4em;transition:color .15s;display:none;line-height:1;}
+#searchClear:hover{color:var(--white);}
+
+/* ── Search highlight states ── */
+body.searching .pn{opacity:.15;filter:saturate(0.2);transition:opacity .2s,filter .2s;}
+body.searching .pn.search-match{opacity:1!important;filter:none!important;
+  border-color:rgba(201,168,76,.85)!important;
+  box-shadow:0 0 16px rgba(201,168,76,.4)!important;z-index:10;position:relative;}
+body.searching .pn.search-match .pname{color:#f0dfa0;}
+
+/* ── Tree glow border ── */
+.tree-wrap{border-radius:12px;padding:10px 10px 8px;
+  border:1px solid var(--tree-border,rgba(255,255,255,.05));
+  box-shadow:0 0 22px var(--tree-glow,transparent);
+  background:rgba(4,7,13,.3);
+  transition:box-shadow .3s;}
+.tree-wrap:hover{box-shadow:0 0 36px var(--tree-glow,transparent);}
+
+/* ── Collapse toggle ── */
+.collapse-btn{display:inline-flex;align-items:center;justify-content:center;
+  width:13px;height:13px;border-radius:50%;
+  border:1px solid var(--tc,var(--gold-dim));
+  background:rgba(4,7,13,.95);cursor:pointer;
+  position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+  z-index:5;font-size:7px;color:var(--tc,var(--gold));
+  line-height:1;user-select:none;
+  transition:transform .22s,background .15s;}
+.collapse-btn:hover{background:rgba(201,168,76,.18);}
+.fn-collapsible{position:relative;}
+.fn-collapsible.collapsed > .collapse-btn{transform:translateX(-50%) rotate(-90deg);}
+.fn-collapsible.collapsed > .drop{display:none;}
+.fn-collapsible.collapsed > .cr{display:none;}
+
 /* ── Detail panel ── */
 #panel{position:fixed;bottom:0;left:0;right:0;z-index:200;
   background:rgba(6,10,20,.97);border-top:1px solid rgba(201,168,76,.15);border-radius:16px 16px 0 0;
@@ -135,6 +178,16 @@ body{background:var(--bg);color:var(--white);font-family:'Philosopher',serif;ove
     <div class="header-title">Family Trees</div>
     <div class="header-sub">Lineage &amp; Legacy · Drag · Scroll to zoom · Click any card</div>
   </div>
+</div>
+
+<!-- Search -->
+<div id="searchWrap">
+  <div id="searchInner">
+    <span id="searchIcon">⌕</span>
+    <input id="searchBox" type="text" placeholder="Search people…" autocomplete="off" spellcheck="false">
+    <button id="searchClear" title="Clear">✕</button>
+  </div>
+  <span id="searchCount"></span>
 </div>
 
 <div class="legend">
@@ -211,6 +264,7 @@ const TREES = {
             pid:p('General Iroh','Dragon of the West · Grand Lotus · Tea Master','fire','c. 45 AG',null,
               'The elder son of Azulon. Once the Fire Nation\'s most feared military commander. His son Lu Ten\'s death during the Siege of Ba Sing Se shattered him. He abandoned the campaign, traveled every nation, and became Zuko\'s true father figure and the moral heart of the series. Can generate and redirect lightning.',
               'Fire Nation Royal Family'),
+            spouse:p("Iroh's Wife","Lu Ten's Mother · Unnamed in Canon",'none','?','?','Iroh\'s wife and Lu Ten\'s mother. She is never named or shown in any canon source — not the animated series, comics, or novels. She may have died before the events of the show; Iroh never speaks of her.','Fire Nation Royal Family'),
             children:[{
               pid:p('Lu Ten','Prince · Son of Iroh','fire','?','95 AG',
                 'Iroh\'s only son. Died during the 600-day Siege of Ba Sing Se — a loss so shattering that Iroh abandoned the siege and turned away from the war forever.',
@@ -236,6 +290,7 @@ const TREES = {
                   pid:p('Fire Lord Izumi','Fire Lord · Zuko\'s Daughter','fire','?',null,
                     'Zuko\'s daughter and the current Fire Lord in Korra\'s era. Stoic, decisive, and deeply committed to keeping the Fire Nation out of unnecessary conflicts.',
                     'Fire Nation Royal Family'),
+                  spouse:p('Izumi\'s Husband','Fire Nation · Unnamed in Canon','none','?',null,'Izumi\'s husband and the father of General Iroh II. His identity is never revealed in the series.','Fire Nation Royal Family'),
                   children:[{
                     pid:p('General Iroh II','United Forces General · Fire Lord\'s Son','fire','?',null,
                       'Izumi\'s son and a senior general of the United Forces. Named after his great-great-uncle Iroh. A key military figure during Kuvira\'s invasion of Republic City.',
@@ -260,10 +315,26 @@ const TREES = {
     label:'The Avatar Cycle',
     color:'rgba(155,127,232,0.3)',
     root:{
-      pid:p('Avatar Yangchen','Air Nomad Avatar · Most Celebrated','air','?','?',
-        'Widely considered one of the greatest Avatars ever. An Air Nomad of extraordinary power who believed the Avatar\'s duty to the world must override all personal spiritual peace. Made ruthless choices to protect the living world, leaving a complicated geopolitical legacy.',
+      pid:p('Avatar Wan','First Avatar · The Bridge','spirit','c. 9,829 BG','c. 9,759 BG',
+        'The very first Avatar — a young thief who stole fire from a lion turtle and was exiled to a spirit wilds. He befriended Raava, the spirit of peace and light, and during Harmonic Convergence the two fused permanently, allowing Wan to imprison Vaatu and separate the human and spirit worlds. He spent the rest of his long life trying to heal the fractured world, but died before he could see it finished. Every Avatar since carries Raava and is his reincarnation.',
         'The Avatar Cycle'),
       children:[{
+        pid:p('Avatar Gun','Avatar · Era Unknown','none','?','?',
+          'One of the few named Avatars from the vast unrecorded era between Wan and Szeto. Mentioned by name in the Yangchen novels. Nation, element, and deeds are unknown — Gun is a ghost in the historical record.',
+          'The Avatar Cycle'),
+        children:[{
+          pid:p('Avatar Salai','Avatar · One of the Greatest','none','?','?',
+            'Named in The Rise of Kyoshi as one of the greatest Avatars of all time. Nation of origin is unconfirmed — many theorize an Earth Kingdom Avatar. Their specific deeds are lost to history, surviving only in the reverence later Avatars held for their legacy.',
+            'The Avatar Cycle'),
+          children:[{
+            pid:p('Avatar Szeto','Fire Nation Avatar · Grand Advisor · Bureaucrat','fire','?','?',
+              'The Fire Nation Avatar directly preceding Yangchen. Born during catastrophic plagues, famine, and warring noble clans threatening to tear the Fire Nation apart. Rather than wield raw power, he chose patience — entering the government as a low-level minister and working up to Grand Advisor to Fire Lord Yosor. He ended coin debasement, brokered peace between the clans, and created the first famine relief programs. A revered figure; the Szeto Festival and school portraits honor him still. Also the first Avatar shown capable of lavabending.',
+              'The Avatar Cycle'),
+            children:[{
+        pid:p('Avatar Yangchen','Air Nomad Avatar · Most Celebrated','air','?','?',
+          'Widely considered one of the greatest Avatars ever. An Air Nomad of extraordinary power who believed the Avatar\'s duty to the world must override all personal spiritual peace. Made ruthless choices to protect the living world, leaving a complicated geopolitical legacy.',
+          'The Avatar Cycle'),
+        children:[{
         pid:p('Avatar Kuruk','Water Tribe Avatar · Broken by Grief','water','?','?',
           'A Northern Water Tribe waterbender who appeared carefree — but spent his entire life secretly fighting dark spirits in the Spirit World. The spirits destroyed everyone close to him. His wife Ummi was taken by the spirit Koh on their wedding day. He died young, drained by years of spiritual combat no one else knew about.',
           'The Avatar Cycle'),
@@ -322,7 +393,11 @@ const TREES = {
           }]
         }]
       }]
-    }
+    }]
+  }]
+}]
+}]
+  }
   },
 
   /* ── Southern Water Tribe ── */
@@ -438,7 +513,7 @@ const TREES = {
           },
           {
             pid:p('Suyin Beifong','Matriarch of Zaofu · Dancer · Metalbender','earth','126 AG',null,
-              'Toph\'s younger daughter. After a troubled youth she traveled the world and eventually founded Zaofu — the most technologically advanced city on Earth, built entirely of platinum. Dancer, artist, mother of five.',
+              'Toph\'s younger daughter, whose father\'s identity was never revealed in canon — Toph always refused to say who he was. After a troubled youth she traveled the world and eventually founded Zaofu — the most technologically advanced city on Earth, built entirely of platinum. Dancer, artist, mother of five.',
               'The Beifong Family'),
             spouse:p('Baatar Sr.','Chief Engineer · Architect of Zaofu','none','?',null,'Suyin\'s husband and the primary architect behind Zaofu\'s extraordinary design.','The Beifong Family'),
             children:[
@@ -469,6 +544,10 @@ const TREES = {
     label:'Mako & Bolin — The Brothers',
     color:'rgba(249,115,22,0.2)',
     root:{
+      pid:p('Mako (Elder)','Fire Nation Patriarch · Grandfather','fire','?','?',
+        'The paternal grandfather of Mako and Bolin, and the man Mako was named after. A Fire Nation native who built a life in Republic City. Little else is recorded about him in canon, but his name lives on in his eldest grandson.',
+        "Mako & Bolin's Family"),
+      children:[{
       pid:p('San','Father · Fire Nation Immigrant','fire','?','?',
         'Father of Mako and Bolin. A Fire Nation immigrant who settled in Republic City with his wife Naoki. He and Naoki were killed by the Triple Threat Triad when Mako was eight and Bolin was six.',
         "Mako & Bolin's Family"),
@@ -485,6 +564,7 @@ const TREES = {
             "Mako & Bolin's Family")
         }
       ]
+    }]
     }
   },
 
@@ -583,7 +663,9 @@ function card(pid, isSpouse=false){
 }
 
 function renderNode(node, tc){
-  let h = `<div class="fn">`;
+  const hasChildren = node.children && node.children.length > 0;
+  const collapsible = hasChildren ? ' fn-collapsible' : '';
+  let h = `<div class="fn${collapsible}">`;
   if(node.spouse){
     h += `<div class="couple">`;
     h += card(node.pid,false);
@@ -593,7 +675,8 @@ function renderNode(node, tc){
   } else {
     h += card(node.pid,false);
   }
-  if(node.children && node.children.length){
+  if(hasChildren){
+    h += `<button class="collapse-btn" title="Collapse/expand" style="--tc:${tc}">▾</button>`;
     h += `<div class="drop"></div><div class="cr">`;
     for(const c of node.children){
       h += `<div class="cb">${renderNode(c,tc)}</div>`;
@@ -603,6 +686,21 @@ function renderNode(node, tc){
   h += `</div>`;
   return h;
 }
+
+// Tree element → glow color mapping
+const TREE_GLOWS = {
+  fire:  {border:'rgba(249,115,22,.25)', glow:'rgba(249,115,22,.08)'},
+  aang:  {border:'rgba(155,127,232,.25)', glow:'rgba(155,127,232,.08)'},
+  water: {border:'rgba(77,184,255,.25)', glow:'rgba(77,184,255,.08)'},
+  northern:{border:'rgba(77,184,255,.2)', glow:'rgba(77,184,255,.06)'},
+  korra: {border:'rgba(77,184,255,.22)', glow:'rgba(77,184,255,.07)'},
+  beifong:{border:'rgba(106,191,105,.25)', glow:'rgba(106,191,105,.08)'},
+  earth: {border:'rgba(106,191,105,.2)', glow:'rgba(106,191,105,.06)'},
+  mako:  {border:'rgba(249,115,22,.2)', glow:'rgba(249,115,22,.06)'},
+  sato:  {border:'rgba(107,138,171,.22)', glow:'rgba(107,138,171,.07)'},
+  adversaries:{border:'rgba(107,138,171,.2)', glow:'rgba(107,138,171,.06)'},
+  ursa:  {border:'rgba(249,115,22,.18)', glow:'rgba(249,115,22,.05)'},
+};
 
 /* ══ LAYOUT ══
    Condensed grid: trees placed in a tight 2-column layout
@@ -618,10 +716,9 @@ const LAYOUT = [
   [{key:'adversaries'}],
 ];
 
-const COL_W = 820;   // px per column
-const COL_GAP = 40;  // gap between columns
-const PAD = 28;      // outer padding
-const ROW_GAP = 40;  // gap between rows
+const COL_GAP = 20;  // gap between columns
+const PAD = 20;      // outer padding
+const ROW_GAP = 20;  // gap between rows
 
 const inner = document.getElementById('canvasInner');
 const bsvg  = document.getElementById('bridgeSvg');
@@ -633,7 +730,8 @@ Object.entries(TREES).forEach(([key, tree]) => {
   const wrap = document.createElement('div');
   wrap.className = 'tree-wrap';
   wrap.id = 'tree-' + key;
-  wrap.style.cssText = `position:absolute;left:0;top:0;`;
+  const glow = TREE_GLOWS[key] || {border:'rgba(255,255,255,.05)',glow:'transparent'};
+  wrap.style.cssText = `position:absolute;left:0;top:0;--tree-border:${glow.border};--tree-glow:${glow.glow};`;
   const tc = tree.color;
   wrap.innerHTML = `
     <div class="tree-title" style="color:${tc.replace(/[\d.]+\)$/,'0.65)')};">${tree.label}</div>
@@ -642,26 +740,29 @@ Object.entries(TREES).forEach(([key, tree]) => {
   treeEls[key] = wrap;
 });
 
-// After render, position trees
+// After render, position trees using actual rendered widths
 requestAnimationFrame(() => {
   let currentY = PAD;
+  let maxRight = 0;
 
   LAYOUT.forEach(row => {
     let rowH = 0;
-    row.forEach((col, ci) => {
+    let currentX = PAD;
+    row.forEach((col) => {
       const el = treeEls[col.key];
       if(!el) return;
-      const x = PAD + ci * (COL_W + COL_GAP);
-      el.style.left = x + 'px';
+      el.style.left = currentX + 'px';
       el.style.top  = currentY + 'px';
-      rowH = Math.max(rowH, el.offsetHeight);
+      const w = el.offsetWidth;
+      const h = el.offsetHeight;
+      currentX += w + COL_GAP;
+      maxRight = Math.max(maxRight, currentX);
+      rowH = Math.max(rowH, h);
     });
     currentY += rowH + ROW_GAP;
   });
 
-  // Size SVG overlay
-  const totalW = PAD * 2 + COL_W * 2 + COL_GAP;
-  bsvg.style.width  = totalW + 'px';
+  bsvg.style.width  = maxRight + PAD + 'px';
   bsvg.style.height = currentY + 'px';
 
   resetView();
@@ -709,7 +810,69 @@ function drawBridges(){
   });
 }
 
-/* ══ DETAIL PANEL ══ */
+/* ══ SEARCH ══ */
+const searchBox   = document.getElementById('searchBox');
+const searchCount = document.getElementById('searchCount');
+const searchClear = document.getElementById('searchClear');
+
+function doSearch(q) {
+  const all = inner.querySelectorAll('.pn');
+  if (!q) {
+    document.body.classList.remove('searching');
+    all.forEach(c => c.classList.remove('search-match'));
+    searchCount.textContent = '';
+    searchClear.style.display = 'none';
+    return;
+  }
+  document.body.classList.add('searching');
+  searchClear.style.display = 'inline';
+  const ql = q.toLowerCase();
+  let matches = [];
+  all.forEach(c => {
+    const pid = c.dataset.pid;
+    const d = PEOPLE[pid];
+    const hit = d && (d.name.toLowerCase().includes(ql) || (d.title||'').toLowerCase().includes(ql));
+    c.classList.toggle('search-match', !!hit);
+    if (hit) matches.push(c);
+  });
+  searchCount.textContent = matches.length ? `${matches.length} found` : 'no match';
+
+  // Pan to first match
+  if (matches.length > 0) {
+    const c = matches[0];
+    const ir = inner.getBoundingClientRect();
+    const cr = c.getBoundingClientRect();
+    // Node center in canvas space
+    const nx = (cr.left - ir.left) / currentScale + c.offsetWidth / 2;
+    const ny = (cr.top  - ir.top)  / currentScale + c.offsetHeight / 2;
+    // Pan so node lands at screen center
+    tx = window.innerWidth  / 2 - nx * currentScale;
+    ty = window.innerHeight / 2 - ny * currentScale;
+    applyT(true);
+    setTimeout(drawBridges, 300);
+  }
+}
+
+let searchTimer;
+searchBox.addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => doSearch(searchBox.value.trim()), 160);
+});
+searchBox.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { searchBox.value=''; doSearch(''); searchBox.blur(); }
+});
+searchClear.addEventListener('click', () => { searchBox.value=''; doSearch(''); });
+
+/* ══ COLLAPSE / EXPAND ══ */
+inner.addEventListener('click', e => {
+  const btn = e.target.closest('.collapse-btn');
+  if (!btn) return;
+  e.stopPropagation();
+  const fn = btn.closest('.fn-collapsible');
+  if (!fn) return;
+  fn.classList.toggle('collapsed');
+  setTimeout(() => { drawBridges(); }, 50);
+});
 const panel = document.getElementById('panel');
 function openPanel(pid){
   const d = PEOPLE[pid]; if(!d) return;
@@ -752,6 +915,7 @@ function resetView(){
 let drag=false, didDrag=false, dX=0, dY=0;
 outer.addEventListener('mousedown', e=>{
   if(e.button!==0) return;
+  if(e.target.closest('#searchWrap')) return;
   drag=true; didDrag=false; dX=e.clientX-tx; dY=e.clientY-ty;
   outer.classList.add('drag');
 });
@@ -764,6 +928,8 @@ window.addEventListener('mousemove', e=>{
 window.addEventListener('mouseup', e=>{
   drag=false; outer.classList.remove('drag');
   if(!didDrag){
+    if(e.target.closest('.collapse-btn')) return;
+    if(e.target.closest('#searchWrap')) return;
     const pn=e.target.closest('.pn');
     if(pn) openPanel(pn.dataset.pid);
     else if(!e.target.closest('#panel')&&!e.target.closest('.hud')) panel.classList.remove('open');
